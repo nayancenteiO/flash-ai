@@ -1,0 +1,12 @@
+.custom-flex {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.custom-flex textarea {
+    flex-basis: 80%;
+    height: 40px;
+}

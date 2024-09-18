@@ -25,6 +25,7 @@ type Lens = {
   id: number;
   name: string;
   display: boolean;
+  creditconsumption: number;
   imageToTextModel: string;
   maxTokens: number;
   textToImageModel: string;
@@ -44,6 +45,7 @@ const initialLenses: Lens[]= [
     id: 1,
     name: "Portrait Enhancer",
     display: true,
+    creditconsumption: 1,
     imageToTextModel: "GPT-4-Vision",
     maxTokens: 1000,
     textToImageModel: "DALL-E 3",
@@ -61,6 +63,7 @@ const initialLenses: Lens[]= [
     id: 2,
     name: "Landscape Optimizer",
     display: false,
+    creditconsumption: 2,
     imageToTextModel: "CLIP",
     maxTokens: 500,
     textToImageModel: "Stable Diffusion",
@@ -73,6 +76,276 @@ const initialLenses: Lens[]= [
     cfgScale: 8,
     image: null,
     usageCount: 75,
+  },
+  {
+    id: 3,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 4,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 5,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 6,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 7,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 8,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 9,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 10,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 11,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 12,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 13,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 14,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 15,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
+  },
+  {
+    id: 16,
+    name: "Landscape Optimizer",
+    display: false,
+    creditconsumption: 2,
+    imageToTextModel: "CLIP",
+    maxTokens: 500,
+    textToImageModel: "Stable Diffusion",
+    upscaleModel: "Waifu2x",
+    lastUpdate: new Date("2023-06-01"),
+    prompt: "Optimize landscape colors and details",
+    stylePrompt: "Vibrant colors, high contrast",
+    negativePrompt: "Blurry, low contrast",
+    steps: 40,
+    cfgScale: 8,
+    image: null,
+    usageCount: 75,
+  },
+  {
+    id: 17,
+    name: "Portrait Enhancer",
+    display: true,
+    creditconsumption: 1,
+    imageToTextModel: "GPT-4-Vision",
+    maxTokens: 1000,
+    textToImageModel: "DALL-E 3",
+    upscaleModel: "Real-ESRGAN",
+    lastUpdate: new Date("2023-05-15"),
+    prompt: "Enhance portrait features",
+    stylePrompt: "Soft lighting, warm tones",
+    negativePrompt: "Harsh shadows, oversaturation",
+    steps: 30,
+    cfgScale: 7,
+    image: null,
+    usageCount: 150,
   },
 ]
 
@@ -119,9 +392,6 @@ export function AiLensDashboard() {
     };
   }, []);
 
-  // const handleRefresh = () => {
-  //   setIsModalOpen(true);
-  // }
   const handleRefresh = () => {
     setIsLoading(true)
     // Simulate an API call
@@ -363,7 +633,7 @@ const LensCard: React.FC<LensCardProps> = ({
   handleMoveLens,
   handleDeleteLens
 }) => (
-  <Card className="mb-4">
+  <Card className="mb-4 test">
     <CardHeader className="pb-2">
       <CardTitle className="flex items-center justify-between">
         <span className="flex items-center">
@@ -373,10 +643,17 @@ const LensCard: React.FC<LensCardProps> = ({
           />
           <span className="ml-2">{lens.name}</span>
         </span>
-        <Switch 
-          checked={lens.display} 
-          onCheckedChange={() => handleDisplayToggle(lens.id)}
-        />
+        <div>
+          <Switch className="mr-2"
+            checked={lens.display} 
+            onCheckedChange={() => handleDisplayToggle(lens.id)}
+          />
+          <Switch 
+            checked={lens.display} 
+            onCheckedChange={() => handleDisplayToggle(lens.id)}
+          />
+        </div>
+        
       </CardTitle>
     </CardHeader>
     <CardContent>
@@ -393,6 +670,14 @@ const LensCard: React.FC<LensCardProps> = ({
           <AccordionTrigger>Models and Tokens</AccordionTrigger>
           <AccordionContent>
             <div className="grid gap-4">
+              <div>
+                <Label className="text-sm font-medium">Credit Consumption</Label>
+                <Input 
+                  type="number" 
+                  value={lens.creditconsumption} 
+                  onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
+                />
+              </div>
               <div>
                 <Label className="text-sm font-medium">Image to Text Model</Label>
                 <Select 
@@ -594,15 +879,18 @@ return (
     </div>
     {isLoggedIn && (
         <>
-          <div className="mb-6 ">
+          <div className="mb-6 custom-flex">
             <Label htmlFor="systemPrompt" className="text-lg font-medium">System Prompt</Label>
             <Textarea
               id="systemPrompt"
               value={systemPrompt}
               onChange={(e) => setSystemPrompt(e.target.value)}
               placeholder="Enter system prompt here..."
-              className="mt-2"
+              className=""
             />
+            <Button onClick={handleRefresh} disabled={isLoading}>
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Submit"}
+            </Button>
           </div>
           <div className="flex justify-end mb-4">
         <Button onClick={handleRefresh} disabled={isLoading}>
@@ -739,9 +1027,11 @@ return (
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px]">No</TableHead>
-                  <TableHead>Lens Photo</TableHead>
-                  <TableHead>Lens name</TableHead>
+                  <TableHead>Lens Icon</TableHead>
+                  <TableHead>Lens Name</TableHead>
                   <TableHead>Display</TableHead>
+                  <TableHead>Premium Lens</TableHead>
+                  <TableHead>Credit Consumption</TableHead>
                   <TableHead>Image to Text Model</TableHead>
                   <TableHead>Max Tokens</TableHead>
                   <TableHead>Text to Image Model</TableHead>
@@ -777,6 +1067,20 @@ return (
                       <Switch 
                         checked={lens.display} 
                         onCheckedChange={() => handleDisplayToggle(lens.id)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Switch 
+                        checked={lens.display} 
+                        onCheckedChange={() => handleDisplayToggle(lens.id)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input 
+                       type="number" 
+                       value={lens.creditconsumption} 
+                       onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
+                        className="w-[100px]"
                       />
                     </TableCell>
                     <TableCell>
