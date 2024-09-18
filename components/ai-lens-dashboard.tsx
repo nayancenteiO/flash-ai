@@ -119,8 +119,16 @@ export function AiLensDashboard() {
     };
   }, []);
 
+  // const handleRefresh = () => {
+  //   setIsModalOpen(true);
+  // }
   const handleRefresh = () => {
-    setIsModalOpen(true);
+    setIsLoading(true)
+    // Simulate an API call
+    setTimeout(() => {
+      setLenses(lenses.map(lens => ({ ...lens, lastUpdate: new Date() })))
+      setIsLoading(false)
+    }, 1000)
   }
 
   const handleModalSubmit = (e: React.FormEvent) => {
@@ -586,7 +594,7 @@ return (
     </div>
     {isLoggedIn && (
         <>
-          <div className="mb-6 hidden">
+          <div className="mb-6 ">
             <Label htmlFor="systemPrompt" className="text-lg font-medium">System Prompt</Label>
             <Textarea
               id="systemPrompt"
