@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Camera, Loader2, Copy, Trash2, MoveUp, MoveDown, LogIn, Menu, Upload } from 'lucide-react'
+import { Camera, Loader2, Copy, Trash2, MoveUp, MoveDown, LogIn, Menu, Upload, Plus, Search } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -20,6 +20,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Header } from './header'
+import { ModelDropdown } from './Model-Dropdown'
 
 type Lens = {
   id: number;
@@ -357,6 +359,9 @@ export function AiLensDashboard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [entriesPerPage, setEntriesPerPage] = useState("All")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isScrolled, setIsScrolled] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -366,7 +371,25 @@ export function AiLensDashboard() {
     preference: "",
     attachment: null as File | null
   });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 30) { // Add class if scrolled down more than 50px
+        document.body.classList.add('scrolled');
+        setIsScrolled(true);
+      } else {
+        document.body.classList.remove('scrolled');
+        setIsScrolled(false);
+      }
+    };
 
+    // Add the scroll event listener
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   useEffect(() => {
     const checkLoginStatus = () => {
       const loggedInStatus = localStorage.getItem('isLoggedIn');
@@ -400,6 +423,28 @@ export function AiLensDashboard() {
       setIsLoading(false)
     }, 1000)
   }
+  const handleModelSelect = (option: string) => {
+    // Handle the selected option here
+    console.log(`Selected option: ${option}`)
+    toast({
+      title: "Model Action",
+      description: `You selected: ${option}`,
+    })
+    // You can add more specific logic for each option here
+  }
+  const filteredLenses = lenses.filter(lens =>
+    lens.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lens.imageToTextModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lens.textToImageModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lens.upscaleModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lens.prompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lens.stylePrompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lens.negativePrompt.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const displayedLenses = entriesPerPage === "All" 
+    ? filteredLenses 
+    : filteredLenses.slice(0, parseInt(entriesPerPage));
 
   const handleModalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -816,8 +861,9 @@ const LensCard: React.FC<LensCardProps> = ({
 )
 
 return (
-  <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-    <div className="flex justify-between items-center mb-6">
+  
+  <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8 margin-top">
+    {/* <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold flex items-center">
         <Camera className="h-6 w-6 mr-2" />
         AI Lens Dashboard
@@ -876,7 +922,15 @@ return (
           </DialogContent>
         </Dialog>
       )}
-    </div>
+    </div> */}
+    <Header 
+        isLoggedIn={isLoggedIn}
+        email={email}
+        handleLogout={handleLogout}
+        handleLogin={handleLogin}
+        setEmail={setEmail}
+        setPassword={setPassword}
+      />
     {isLoggedIn && (
         <>
           <div className="mb-6 custom-flex">
@@ -891,11 +945,12 @@ return (
             <Button onClick={handleRefresh} disabled={isLoading}>
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Submit"}
             </Button>
+            
           </div>
           <div className="flex justify-end mb-4">
-        <Button onClick={handleRefresh} disabled={isLoading}>
+        {/* <Button onClick={handleRefresh} disabled={isLoading}>
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Refresh"}
-        </Button>
+        </Button> */}
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -1004,10 +1059,44 @@ return (
           </form>
         </DialogContent>
       </Dialog>
-          
+      <div className="mt-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Lens Data</h2>
+              <div className="space-x-2">
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Lens Data
+                </Button>
+                <ModelDropdown onSelect={handleModelSelect} />
+              </div>
+            </div>
+            <div className="flex justify-between items-center mb-4">
+              <Select value={entriesPerPage} onValueChange={setEntriesPerPage}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Entries per page" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+            </div>
+          </div>
           {/* Mobile view */}
           <div className="md:hidden">
-            {lenses.map((lens, index) => (
+            {displayedLenses.map((lens, index) => (
               <LensCard 
                 key={lens.id} 
                 lens={lens} 
@@ -1047,7 +1136,7 @@ return (
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {lenses.map((lens, index) => (
+                {displayedLenses.map((lens, index) => (
                   <TableRow key={lens.id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>

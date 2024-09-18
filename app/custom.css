@@ -10,3 +10,26 @@
     flex-basis: 80%;
     height: 40px;
 }
+.fixed_position {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 20px 32px;
+    z-index: 99;
+    background: #fff;
+}
+.margin-top {
+    margin-top: 5rem;
+}
+.scrolled .fixed_position {
+    box-shadow: 0px 0px 0px 1px rgba(9, 9, 11, .07), 0px 4px 4px 0px rgba(9, 9, 11, .05);
+}
+
+/* media */
+@media(max-width:767px){
+    .custom-flex {
+        flex-direction: column;
+        row-gap: 15px;
+    }
+}
