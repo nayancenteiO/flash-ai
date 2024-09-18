@@ -36,7 +36,7 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
           <DialogTrigger asChild>
             <Button>Login</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className='z-index-999'>
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
             </DialogHeader>

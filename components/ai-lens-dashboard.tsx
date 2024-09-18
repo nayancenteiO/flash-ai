@@ -21,7 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Header } from './header'
-import { ModelDropdown } from './Model-Dropdown'
+import { ModelDropdown } from './model-dropdown'
 
 type Lens = {
   id: number;
@@ -573,29 +573,52 @@ export function AiLensDashboard() {
 
   interface PromptPopoverProps {
     value: string;
-    onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onChange: (value: string) => void;
     title: string;
   }
 
-  const PromptPopover: React.FC<PromptPopoverProps> = ({ value, onChange, title }) => (
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button variant="outline" className="w-full justify-start truncate">
-        {value || "Edit prompt"}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className="w-80">
-      <div className="grid gap-4">
-        <h4 className="font-medium leading-none">{title}</h4>
-        <Textarea
-          value={value}
-          onChange={onChange}
-          className="h-40"
-        />
-      </div>
-    </PopoverContent>
-  </Popover>
-)
+  const PromptPopover: React.FC<PromptPopoverProps> = ({ value, onChange, title }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [tempValue, setTempValue] = useState(value);
+  
+    const handleOpen = () => {
+      setTempValue(value);
+      setIsOpen(true);
+    };
+  
+    const handleClose = () => {
+      setIsOpen(false);
+    };
+  
+    const handleSave = () => {
+      onChange(tempValue);
+      handleClose();
+    };
+  
+    return (
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="w-full justify-start truncate" onClick={handleOpen}>
+            {value || "Edit prompt"}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80" onInteractOutside={(e) => e.preventDefault()}>
+          <div className="grid gap-4">
+            <h4 className="font-medium leading-none">{title}</h4>
+            <Textarea
+              value={tempValue}
+              onChange={(e) => setTempValue(e.target.value)}
+              className="h-40"
+            />
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleSave}>Save</Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  };
 interface DeleteConfirmationProps {
   onConfirm: () => void;
 }
@@ -790,7 +813,7 @@ const LensCard: React.FC<LensCardProps> = ({
                 <Label className="text-sm font-medium">Prompt</Label>
                 <PromptPopover
                   value={lens.prompt}
-                  onChange={(e) => handleLensInputChange(lens.id, 'prompt', e.target.value)}
+                  onChange={(value) => handleLensInputChange(lens.id, 'prompt', value)}
                   title="Edit Prompt"
                 />
               </div>
@@ -798,7 +821,7 @@ const LensCard: React.FC<LensCardProps> = ({
                 <Label className="text-sm font-medium">Style Prompt</Label>
                 <PromptPopover
                   value={lens.stylePrompt}
-                  onChange={(e) => handleLensInputChange(lens.id, 'stylePrompt', e.target.value)}
+                  onChange={(value) => handleLensInputChange(lens.id, 'stylePrompt', value)}
                   title="Edit Style Prompt"
                 />
               </div>
@@ -806,7 +829,7 @@ const LensCard: React.FC<LensCardProps> = ({
                 <Label className="text-sm font-medium">Negative Prompt</Label>
                 <PromptPopover
                   value={lens.negativePrompt}
-                  onChange={(e) => handleLensInputChange(lens.id, 'negativePrompt', e.target.value)}
+                  onChange={(value) => handleLensInputChange(lens.id, 'negativePrompt', value)}
                   title="Edit Negative Prompt"
                 />
               </div>
@@ -1070,9 +1093,9 @@ return (
                 <ModelDropdown onSelect={handleModelSelect} />
               </div>
             </div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
               <Select value={entriesPerPage} onValueChange={setEntriesPerPage}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px] mb-2 sm:mb-0">
                   <SelectValue placeholder="Entries per page" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1082,14 +1105,14 @@ return (
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="text"
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8"
+                  className="pl-8 w-full"
                 />
               </div>
             </div>
@@ -1228,21 +1251,21 @@ return (
                     <TableCell>
                       <PromptPopover
                         value={lens.prompt}
-                        onChange={(e) => handleLensInputChange(lens.id, 'prompt', e.target.value)}
+                        onChange={(value) => handleLensInputChange(lens.id, 'prompt', value)}
                         title="Edit Prompt"
                       />
                     </TableCell>
                     <TableCell>
                       <PromptPopover
                         value={lens.stylePrompt}
-                        onChange={(e) => handleLensInputChange(lens.id, 'stylePrompt', e.target.value)}
+                        onChange={(value) => handleLensInputChange(lens.id, 'stylePrompt', value)}
                         title="Edit Style Prompt"
                       />
                     </TableCell>
                     <TableCell>
                       <PromptPopover
                         value={lens.negativePrompt}
-                        onChange={(e) => handleLensInputChange(lens.id, 'negativePrompt', e.target.value)}
+                        onChange={(value) => handleLensInputChange(lens.id, 'negativePrompt', value)}
                         title="Edit Negative Prompt"
                       />
                     </TableCell>
