@@ -886,66 +886,7 @@ const LensCard: React.FC<LensCardProps> = ({
 return (
   
   <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8 margin-top">
-    {/* <div className="flex justify-between items-center mb-6">
-      <h1 className="text-2xl font-bold flex items-center">
-        <Camera className="h-6 w-6 mr-2" />
-        AI Lens Dashboard
-      </h1>
-      {isLoggedIn ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{email}</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Login</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Login</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleLogin}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="col-span-3"
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="col-span-3"
-                    required
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Login</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      )}
-    </div> */}
+   
     <Header 
         isLoggedIn={isLoggedIn}
         email={email}

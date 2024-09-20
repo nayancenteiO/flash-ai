@@ -17,6 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Add favicon link here */}
+        <link rel="icon" href="/favicon.png" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
