@@ -880,7 +880,7 @@ const LensCard: React.FC<LensCardProps> = ({
         </Button>
       </div>
     </CardContent>
-  </Card
+  </Card>
 )
 
 return (
