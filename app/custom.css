@@ -29,10 +29,36 @@
 .z-index-999 {
     z-index: 999;
 }
+textarea.max-width {
+    min-height: 36px;
+    height: 36px;
+}
+.latestes {
+    max-height: 400px;
+    min-height: 200px;
+}
 /* media */
 @media(max-width:767px){
     .custom-flex {
         flex-direction: column;
         row-gap: 15px;
+    }
+    textarea.latest-bio {
+        width: 100% !important;
+    }
+    .mobile-de {
+        width: 150%;
+    }
+}
+@media(max-width:480px){
+    .custom-flex {
+        flex-direction: column;
+        row-gap: 15px;
+    }
+    textarea.latest-bio {
+        width: 100% !important;
+    }
+    .mobile-de {
+        width: 115%;
     }
 }
