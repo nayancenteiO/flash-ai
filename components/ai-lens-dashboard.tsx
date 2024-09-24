@@ -39,7 +39,7 @@ type Lens = {
   steps: number;
   cfgScale: number;
   image: string | null;
-  usageCount: number
+  usageCount: number ;
 };
 // Mock data for the lenses
 const initialLenses: Lens[]= [
