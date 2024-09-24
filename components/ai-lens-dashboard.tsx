@@ -28,14 +28,15 @@ type Lens = {
   name: string;
   display: boolean;
   creditconsumption: number;
+  promptgenerationflow: string;
   imageToTextModel: string;
   maxTokens: number;
   textToImageModel: string;
-  upscaleModel: string;
   lastUpdate: Date;
   prompt: string;
   stylePrompt: string;
   negativePrompt: string;
+  Aproxtime: string ;
   steps: number;
   cfgScale: number;
   image: string | null;
@@ -45,17 +46,18 @@ type Lens = {
 const initialLenses: Lens[]= [
   {
     id: 1,
-    name: "Portrait Enhancer",
+    name: "Quick AI Lens",
     display: true,
     creditconsumption: 1,
+    promptgenerationflow: "Flow C",
     imageToTextModel: "GPT-4-Vision",
     maxTokens: 1000,
     textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
     lastUpdate: new Date("2023-05-15"),
     prompt: "Enhance portrait features",
     stylePrompt: "Soft lighting, warm tones",
     negativePrompt: "Harsh shadows, oversaturation",
+    Aproxtime: "DALL-E 3",
     steps: 30,
     cfgScale: 7,
     image: null,
@@ -63,291 +65,22 @@ const initialLenses: Lens[]= [
   },
   {
     id: 2,
-    name: "Landscape Optimizer",
+    name: "Retro Pop",
     display: false,
     creditconsumption: 2,
+    promptgenerationflow: "Flow B",
     imageToTextModel: "CLIP",
     maxTokens: 500,
     textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
     lastUpdate: new Date("2023-06-01"),
     prompt: "Optimize landscape colors and details",
     stylePrompt: "Vibrant colors, high contrast",
     negativePrompt: "Blurry, low contrast",
+    Aproxtime: "DALL-E 3",
     steps: 40,
     cfgScale: 8,
     image: null,
     usageCount: 75,
-  },
-  {
-    id: 3,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 4,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 5,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 6,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 7,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 8,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 9,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 10,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 11,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 12,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 13,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 14,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 15,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
-  },
-  {
-    id: 16,
-    name: "Landscape Optimizer",
-    display: false,
-    creditconsumption: 2,
-    imageToTextModel: "CLIP",
-    maxTokens: 500,
-    textToImageModel: "Stable Diffusion",
-    upscaleModel: "Waifu2x",
-    lastUpdate: new Date("2023-06-01"),
-    prompt: "Optimize landscape colors and details",
-    stylePrompt: "Vibrant colors, high contrast",
-    negativePrompt: "Blurry, low contrast",
-    steps: 40,
-    cfgScale: 8,
-    image: null,
-    usageCount: 75,
-  },
-  {
-    id: 17,
-    name: "Portrait Enhancer",
-    display: true,
-    creditconsumption: 1,
-    imageToTextModel: "GPT-4-Vision",
-    maxTokens: 1000,
-    textToImageModel: "DALL-E 3",
-    upscaleModel: "Real-ESRGAN",
-    lastUpdate: new Date("2023-05-15"),
-    prompt: "Enhance portrait features",
-    stylePrompt: "Soft lighting, warm tones",
-    negativePrompt: "Harsh shadows, oversaturation",
-    steps: 30,
-    cfgScale: 7,
-    image: null,
-    usageCount: 150,
   },
 ]
 
@@ -436,7 +169,6 @@ export function AiLensDashboard() {
     lens.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lens.imageToTextModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lens.textToImageModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    lens.upscaleModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lens.prompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lens.stylePrompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lens.negativePrompt.toLowerCase().includes(searchQuery.toLowerCase())
@@ -747,6 +479,22 @@ const LensCard: React.FC<LensCardProps> = ({
                 />
               </div>
               <div>
+                <Label className="text-sm font-medium">  Prompt Generation Flow</Label>
+                <Select 
+                  value={lens.promptgenerationflow} 
+                  onValueChange={(value) => handleLensInputChange(lens.id, 'promptgenerationflow', value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Flow A">Flow A</SelectItem>
+                    <SelectItem value="Flow B">Flow B</SelectItem>
+                    <SelectItem value="Flow C">Flow C</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label className="text-sm font-medium">Image to Text Model</Label>
                 <Select 
                   value={lens.imageToTextModel} 
@@ -775,22 +523,6 @@ const LensCard: React.FC<LensCardProps> = ({
                     <SelectItem value="DALL-E 3">DALL-E 3</SelectItem>
                     <SelectItem value="Stable Diffusion">Stable Diffusion</SelectItem>
                     <SelectItem value="Midjourney">Midjourney</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-sm font-medium">Upscale Model</Label>
-                <Select 
-                  value={lens.upscaleModel} 
-                  onValueChange={(value) => handleLensInputChange(lens.id, 'upscaleModel', value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Real-ESRGAN">Real-ESRGAN</SelectItem>
-                    <SelectItem value="Waifu2x">Waifu2x</SelectItem>
-                    <SelectItem value="Topaz Gigapixel">Topaz Gigapixel</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1085,10 +817,10 @@ return (
                   <TableHead>Display</TableHead>
                   <TableHead>Premium Lens</TableHead>
                   <TableHead>Credit Consumption</TableHead>
+                  <TableHead>Prompt Generation Flow</TableHead>
                   <TableHead>Image to Text Model</TableHead>
                   <TableHead>Max Tokens</TableHead>
                   <TableHead>Text to Image Model</TableHead>
-                  <TableHead>Upscale Model</TableHead>
                   <TableHead>Prompt</TableHead>
                   <TableHead>Style Prompt</TableHead>
                   <TableHead>Negative Prompt</TableHead>
@@ -1133,8 +865,23 @@ return (
                        type="number" 
                        value={lens.creditconsumption} 
                        onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
-                        className="w-[100px]"
+                        className="w-[150px]"
                       />
+                    </TableCell>
+                    <TableCell>
+                    <Select 
+                        value={lens.promptgenerationflow} 
+                        onValueChange={(value) => handleLensInputChange(lens.id, 'promptgenerationflow', value)}
+                      >
+                        <SelectTrigger className="w-full w-[180px]">
+                          <SelectValue placeholder="Select model" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Flow A">Flow A</SelectItem>
+                          <SelectItem value="Flow B">Flow B</SelectItem>
+                          <SelectItem value="Flow C">Flow C</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>
                       <Select 
@@ -1151,6 +898,7 @@ return (
                         </SelectContent>
                       </Select>
                     </TableCell>
+                    
                     <TableCell>
                       <Input 
                         type="number" 
@@ -1171,21 +919,6 @@ return (
                           <SelectItem value="DALL-E 3">DALL-E 3</SelectItem>
                           <SelectItem value="Stable Diffusion">Stable Diffusion</SelectItem>
                           <SelectItem value="Midjourney">Midjourney</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Select 
-                        value={lens.upscaleModel} 
-                        onValueChange={(value) => handleLensInputChange(lens.id, 'upscaleModel', value)}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select model" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Real-ESRGAN">Real-ESRGAN</SelectItem>
-                          <SelectItem value="Waifu2x">Waifu2x</SelectItem>
-                          <SelectItem value="Topaz Gigapixel">Topaz Gigapixel</SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>
