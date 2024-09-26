@@ -44,9 +44,11 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
       ) : (
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Login</Button>
+            <div className='mobile_set flex'>
+              <Button>Login</Button>
+            </div>
           </DialogTrigger>
-          <DialogContent className='z-index-999'>
+          <DialogContent className='z-index-999 login-popup'>
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
             </DialogHeader>

@@ -73,7 +73,17 @@ textarea.max-width {
 
     .mobile-flex button {
         font-size: 13px;
-}
+    }
+    .mobile_set {
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .login-popup {
+        width: 90%;
+        border-radius: 8px;
+    }
 }
 @media(max-width:480px){
     .custom-flex {

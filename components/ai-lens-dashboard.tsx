@@ -296,6 +296,18 @@
     });
     const [editingId, setEditingId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [editingAproxTimeId, setEditingAproxTimeId] = useState<number | null>(null);
+
+// Add new handler functions for Aprox Time editing
+const handleAproxTimeEdit = (id: number) => {
+  setEditingAproxTimeId(id);
+};
+
+const handleAproxTimeSave = (id: number, newAproxTime: string) => {
+  handleLensInputChange(id, 'Aproxtime', newAproxTime);
+  setEditingAproxTimeId(null);
+};
+
 
     useEffect(() => {
       if (editingId !== null && inputRef.current) {
@@ -998,10 +1010,7 @@
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold">Lens Data</h2>
                 <div className="space-x-2">
-                  <Button variant="outline">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Lens Data
-                  </Button>
+                  
                   <ModelDropdown onSelect={handleModelSelect} />
                 </div>
               </div>
@@ -1223,7 +1232,30 @@
                           className="w-[80px]"
                         />
                       </TableCell>
-                      <TableCell ><div className="w-[80px]">{lens.Aproxtime }</div></TableCell>
+                      <TableCell>
+                        <div className="flex justify-items-center items-center w-[80px]">
+                          {editingAproxTimeId === lens.id ? (
+                            <Input
+                              value={lens.Aproxtime}
+                              onChange={(e) => handleLensInputChange(lens.id, 'Aproxtime', e.target.value)}
+                              onBlur={() => handleAproxTimeSave(lens.id, lens.Aproxtime)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  handleAproxTimeSave(lens.id, lens.Aproxtime);
+                                }
+                              }}
+                              className="w-full"
+                            />
+                          ) : (
+                            <span
+                              className="text-center font-medium cursor-pointer"
+                              onClick={() => handleAproxTimeEdit(lens.id)}
+                            >
+                              {lens.Aproxtime}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>{lens.usageCount}</TableCell>
                       <TableCell>{lens.lastUpdate.toLocaleDateString()}</TableCell>
                       <TableCell>
