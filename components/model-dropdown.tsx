@@ -26,13 +26,6 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
   const [currentKeyword, setCurrentKeyword] = useState('')
 
   const options = [
-    "Add Negative Keywords",
-    "System Prompt",
-    "Remix Prompt",
-    "Add Models Lab Model",
-    "Add Embedding Model",
-    "Add Lora Model",
-    "Update Testing And User Value",
     "Update Upscale Value"
   ]
 
@@ -81,7 +74,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
       </DropdownMenu>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className=" w-[90%]">
           <DialogHeader>
             <DialogTitle>Update Upscale Value</DialogTitle>
           </DialogHeader>

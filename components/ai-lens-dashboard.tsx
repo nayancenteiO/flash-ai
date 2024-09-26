@@ -840,9 +840,28 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Max Tokens</Label>
-                  <div>{lens.Aproxtime}</div>
-              </div>
+                  <Label className="text-sm font-medium">Aprox Time</Label>
+                  {editingAproxTimeId === lens.id ? (
+                            <Input
+                              value={lens.Aproxtime}
+                              onChange={(e) => handleLensInputChange(lens.id, 'Aproxtime', e.target.value)}
+                              onBlur={() => handleAproxTimeSave(lens.id, lens.Aproxtime)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  handleAproxTimeSave(lens.id, lens.Aproxtime);
+                                }
+                              }}
+                              className="w-full"
+                            />
+                          ) : (
+                            <span
+                              className="font-medium w-full block cursor-pointer"
+                              onClick={() => handleAproxTimeEdit(lens.id)}
+                            >
+                              {lens.Aproxtime}
+                            </span>
+                          )}
+                </div>
               </div>
             </AccordionContent>
           </AccordionItem>
