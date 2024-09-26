@@ -17,7 +17,7 @@ interface HeaderProps {
 
 export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail, setPassword }: HeaderProps) {
   const openNegativeDashboard = () => {
-    window.open('/negative-dashboard', '_blank')
+    window.open('/negative-analysis', '_blank')
   }
 
   return (

@@ -1,4 +1,6 @@
-import { NegativeDashboard } from '@/components/negative-dashboard'
+import NegativeDashboard from "@/components/negative-dashboard";
+
+
 
 export default function NegativeDashboardPage() {
   return <NegativeDashboard />
