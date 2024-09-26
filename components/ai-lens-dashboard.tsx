@@ -527,7 +527,7 @@
               value={value || "Edit prompt"}
             />
           </PopoverTrigger>
-          <PopoverContent className="w-[600px] mobile-de"> {/* Set a larger content area inside the popover */}
+          <PopoverContent className="w-[600px] mobile-de">
             <div className="grid gap-4">
               <h4 className="font-medium leading-none">{title}</h4>
               <Textarea
