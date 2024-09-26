@@ -1,6 +1,6 @@
   'use client'
 
-  import { useState, useEffect } from 'react'
+  import { useState, useRef, useEffect } from 'react'
   import { Camera, Loader2, Copy, Trash2, MoveUp, MoveDown, LogIn, Menu, Upload, Plus, Search } from 'lucide-react'
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
   import { Switch } from "@/components/ui/switch"
@@ -294,6 +294,24 @@
       preference: "",
       attachment: null as File | null
     });
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+      if (editingId !== null && inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, [editingId]);
+  
+    const handleNameEdit = (id: number) => {
+      setEditingId(id);
+    };
+  
+    const handleNameSave = (id: number, newName: string) => {
+      handleLensInputChange(id, 'name', newName);
+      setEditingId(null);
+    };
+
     useEffect(() => {
       const handleScroll = () => {
         if (window.scrollY > 30) { // Add class if scrolled down more than 50px
@@ -616,6 +634,10 @@
     handleCopyLens: (id: number) => void;
     handleMoveLens: (id: number, direction: 'up' | 'down') => void;
     handleDeleteLens: (id: number) => void;
+    handleNameEdit: (id: number) => void;
+    handleNameSave: (id: number, newName: string) => void;
+    editingId: number | null;
+    
   }
   const LensCard: React.FC<LensCardProps> = ({ 
     lens, 
@@ -634,7 +656,27 @@
               lens={lens} 
               onUpload={(file) => handleImageUpload(lens.id, file)} 
             />
-            <span className="ml-2">{lens.name}</span>
+            {editingId === lens.id ? (
+            <Input
+              ref={inputRef}
+              value={lens.name}
+              onChange={(e) => handleLensInputChange(lens.id, 'name', e.target.value)}
+              onBlur={() => handleNameSave(lens.id, lens.name)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleNameSave(lens.id, lens.name);
+                }
+              }}
+              className="ml-2 w-full"
+            />
+          ) : (
+            <span
+              className="ml-2 font-medium cursor-pointer"
+              onClick={() => handleNameEdit(lens.id)}
+            >
+              {lens.name}
+            </span>
+          )}
           </span>
           <div>
             <Switch className="mr-2"
@@ -991,14 +1033,17 @@
             <div className="md:hidden">
               {displayedLenses.map((lens, index) => (
                 <LensCard 
-                  key={lens.id} 
-                  lens={lens} 
-                  index={index}
-                  handleDisplayToggle={handleDisplayToggle}
-                  handleLensInputChange={handleLensInputChange}
-                  handleCopyLens={handleCopyLens}
-                  handleMoveLens={handleMoveLens}
-                  handleDeleteLens={handleDeleteLens}
+                    key={lens.id} 
+                    lens={lens} 
+                    index={index}
+                    handleDisplayToggle={handleDisplayToggle}
+                    handleLensInputChange={handleLensInputChange}
+                    handleCopyLens={handleCopyLens}
+                    handleMoveLens={handleMoveLens}
+                    handleDeleteLens={handleDeleteLens}
+                    handleNameEdit={handleNameEdit}
+                    handleNameSave={handleNameSave}
+                    editingId={editingId}
                 />
               ))}
             </div>
@@ -1044,7 +1089,27 @@
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-items-center items-center w-[100px]">
-                          <span className=" text-center font-medium">{lens.name}</span>
+                          {editingId === lens.id ? (
+                            <Input
+                              ref={inputRef}
+                              value={lens.name}
+                              onChange={(e) => handleLensInputChange(lens.id, 'name', e.target.value)}
+                              onBlur={() => handleNameSave(lens.id, lens.name)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  handleNameSave(lens.id, lens.name);
+                                }
+                              }}
+                              className="w-full"
+                            />
+                          ) : (
+                            <span
+                              className="text-center font-medium cursor-pointer"
+                              onClick={() => handleNameEdit(lens.id)}
+                            >
+                              {lens.name}
+                            </span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>

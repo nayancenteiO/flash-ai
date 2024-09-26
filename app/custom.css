@@ -37,6 +37,8 @@ textarea.max-width {
     max-height: 400px;
     min-height: 200px;
 }
+
+
 /* media */
 @media(max-width:767px){
     .custom-flex {
@@ -49,6 +51,29 @@ textarea.max-width {
     .mobile-de {
         width: 150%;
     }
+    
+    .mnobile-flex-dev {
+        padding: 16px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .mnobile-flex-dev h1 {
+        font-size: 16px;
+        flex-basis: 100%;
+        justify-content: center;
+    }
+
+    .mobile-flex {
+        flex-wrap: nowrap;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .mobile-flex button {
+        font-size: 13px;
+}
 }
 @media(max-width:480px){
     .custom-flex {

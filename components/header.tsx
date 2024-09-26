@@ -1,5 +1,5 @@
 import React from 'react'
-import { Camera } from 'lucide-react'
+import { Camera, LayoutDashboard } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,21 +16,31 @@ interface HeaderProps {
 }
 
 export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail, setPassword }: HeaderProps) {
+  const openNegativeDashboard = () => {
+    window.open('/negative-dashboard', '_blank')
+  }
+
   return (
-    <div className="flex justify-between items-center fixed_position">
-      <h1 className="text-2xl font-bold flex items-center">
+    <div className="flex justify-between items-center fixed_position mnobile-flex-dev">
+      <h1 className="text-2xl font-bold flex items-center mobiel-font">
         <Camera className="h-6 w-6 mr-2" />
         AI Lens Dashboard
       </h1>
       {isLoggedIn ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{email}</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center space-x-2 mobile-flex">
+          <Button variant="outline" onClick={openNegativeDashboard}>
+            <LayoutDashboard className="h-4 w-4 mr-2" />
+            Negative Analysis
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">{email}</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       ) : (
         <Dialog>
           <DialogTrigger asChild>
