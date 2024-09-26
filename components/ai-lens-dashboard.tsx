@@ -295,14 +295,14 @@
       attachment: null as File | null
     });
     const [editingId, setEditingId] = useState<number | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
       if (editingId !== null && inputRef.current) {
         inputRef.current.focus();
       }
     }, [editingId]);
-  
+
     const handleNameEdit = (id: number) => {
       setEditingId(id);
     };
@@ -469,7 +469,8 @@
 
     const handleLogin = (e: React.FormEvent) => {
       e.preventDefault();
-      if (email === "nori@dashboard.com" && password === "10312024") {
+      if ((email === "nori@dashboard.com" && password === "10312024") || 
+          (email === "nayan@dashboard.com" && password === "7069112010")) {
         console.log('Login successful');
         setIsLoggedIn(true);
         localStorage.setItem('isLoggedIn', 'true');
@@ -637,7 +638,6 @@
     handleNameEdit: (id: number) => void;
     handleNameSave: (id: number, newName: string) => void;
     editingId: number | null;
-    
   }
   const LensCard: React.FC<LensCardProps> = ({ 
     lens, 
@@ -1088,7 +1088,7 @@
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex justify-items-center items-center w-[100px]">
+                        <div className="flex justify-items-center items-center w-[150px] wi-conent">
                           {editingId === lens.id ? (
                             <Input
                               ref={inputRef}
