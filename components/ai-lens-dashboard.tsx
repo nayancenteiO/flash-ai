@@ -76,7 +76,7 @@ type Lens = {
     const fetchLensData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://68.183.64.230/api/dashboard/getAllLensData');
+        const response = await fetch('https://flashailens.com/api/dashboard/getAllLensData');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
