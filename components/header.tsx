@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Camera, LayoutDashboard } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,11 +16,17 @@ interface HeaderProps {
 }
 
 export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail, setPassword }: HeaderProps) {
-  const openNegativeDashboard = () => {
-    window.open('/negative-analysis', '_blank')
-  }
+  const [isClient, setIsClient] = useState(false);
 
-  const isNegativeDashboard = window.location.pathname === '/negative-analysis';
+  useEffect(() => {
+    setIsClient(true);  // This ensures the code only runs on the client
+  }, []);
+
+  const openNegativeDashboard = () => {
+    if (isClient) {
+      window.open('/negative-analysis', '_blank');
+    }
+  }
 
   return (
     <div className="flex justify-between items-center fixed_position mnobile-flex-dev">
@@ -30,18 +36,10 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
       </h1>
       {isLoggedIn ? (
         <div className="flex items-center space-x-2 mobile-flex">
-          {!isNegativeDashboard && (
-            <Button variant="outline" onClick={openNegativeDashboard}>
-              <LayoutDashboard className="h-4 w-4 mr-2" />
-              Negative Analysis
-            </Button>
-          )}
-          {isNegativeDashboard && (
-            <Button variant="outline" onClick={() => window.location.href = '/'}>
-              <Camera className="h-4 w-4 mr-2" />
-              Lens Data
-            </Button>
-          )}
+          <Button variant="outline" onClick={openNegativeDashboard}>
+            <LayoutDashboard className="h-4 w-4 mr-2" />
+            Negative Analysis
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">{email}</Button>
