@@ -20,6 +20,8 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
     window.open('/negative-analysis', '_blank')
   }
 
+  const isNegativeDashboard = window.location.pathname === '/negative-analysis';
+
   return (
     <div className="flex justify-between items-center fixed_position mnobile-flex-dev">
       <h1 className="text-2xl font-bold flex items-center mobiel-font">
@@ -28,10 +30,18 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
       </h1>
       {isLoggedIn ? (
         <div className="flex items-center space-x-2 mobile-flex">
-          <Button variant="outline" onClick={openNegativeDashboard}>
-            <LayoutDashboard className="h-4 w-4 mr-2" />
-            Negative Analysis
-          </Button>
+          {!isNegativeDashboard && (
+            <Button variant="outline" onClick={openNegativeDashboard}>
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Negative Analysis
+            </Button>
+          )}
+          {isNegativeDashboard && (
+            <Button variant="outline" onClick={() => window.location.href = '/'}>
+              <Camera className="h-4 w-4 mr-2" />
+              Lens Data
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">{email}</Button>

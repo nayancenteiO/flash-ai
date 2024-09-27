@@ -1,10 +1,10 @@
 // components/negative-dashboard.tsx
 "use client";
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from 'react'
 import Image from "next/image"
 import { Circle, Clock, ChevronLeft, ChevronRight, User, Calendar, Search, Filter } from "lucide-react"
-
+import { toast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-
+import { Header } from './header';
 // Mock data for demonstration
 const mockFeedback = [
   {
@@ -57,6 +57,127 @@ const mockFeedback = [
     prompt: "Design a cutting-edge smartphone with a seamless holographic display. The device should have a sleek, minimalist design with subtle metallic accents.",
     timestamp: "2023-09-18T17:10:30Z",
   },
+  {
+    id: 5,
+    userName: "Alice Johnson",
+    lensName: "CityScape AI",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "DALL-E 3",
+    feedback: "The generated image doesn't accurately reflect the style described in the prompt. The colors are off and the composition lacks the requested dynamic feel.",
+    prompt: "Create a vibrant, abstract cityscape with bold, neon colors. Incorporate flowing lines and geometric shapes to give a sense of movement and energy. The style should be reminiscent of futuristic cyberpunk art.",
+    timestamp: "2023-09-15T14:30:22Z",
+  },
+  {
+    id: 6,
+    userName: "Bob Smith",
+    lensName: "NatureLens",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "Stable Diffusion",
+    feedback: "The image lacks detail in the foliage and the lighting doesn't capture the time of day specified in the prompt.",
+    prompt: "Generate a serene forest scene at golden hour, with sunlight filtering through dense, lush foliage. Include a small, clear stream with rocks and fallen leaves.",
+    timestamp: "2023-09-16T15:45:10Z",
+  },
+  {
+    id: 7,
+    userName: "Carol Davis",
+    lensName: "PortraitPro",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "Midjourney",
+    feedback: "The facial features are disproportionate and the skin texture looks artificial. The background doesn't match the described setting.",
+    prompt: "Create a portrait of a middle-aged woman with kind eyes and laugh lines. She should be in a cozy kitchen setting with warm, natural lighting.",
+    timestamp: "2023-09-17T16:20:05Z",
+  },
+  {
+    id: 8,
+    userName: "David Wilson",
+    lensName: "TechVision",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "DALL-E 3",
+    feedback: "The generated image of the futuristic device lacks the sleek design described. The holographic display is not prominent enough.",
+    prompt: "Design a cutting-edge smartphone with a seamless holographic display. The device should have a sleek, minimalist design with subtle metallic accents.",
+    timestamp: "2023-09-18T17:10:30Z",
+  },
+  {
+    id: 9,
+    userName: "Alice Johnson",
+    lensName: "CityScape AI",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "DALL-E 3",
+    feedback: "The generated image doesn't accurately reflect the style described in the prompt. The colors are off and the composition lacks the requested dynamic feel.",
+    prompt: "Create a vibrant, abstract cityscape with bold, neon colors. Incorporate flowing lines and geometric shapes to give a sense of movement and energy. The style should be reminiscent of futuristic cyberpunk art.",
+    timestamp: "2023-09-15T14:30:22Z",
+  },
+  {
+    id: 10,
+    userName: "Bob Smith",
+    lensName: "NatureLens",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "Stable Diffusion",
+    feedback: "The image lacks detail in the foliage and the lighting doesn't capture the time of day specified in the prompt.",
+    prompt: "Generate a serene forest scene at golden hour, with sunlight filtering through dense, lush foliage. Include a small, clear stream with rocks and fallen leaves.",
+    timestamp: "2023-09-16T15:45:10Z",
+  },
+  {
+    id: 11,
+    userName: "Carol Davis",
+    lensName: "PortraitPro",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "Midjourney",
+    feedback: "The facial features are disproportionate and the skin texture looks artificial. The background doesn't match the described setting.",
+    prompt: "Create a portrait of a middle-aged woman with kind eyes and laugh lines. She should be in a cozy kitchen setting with warm, natural lighting.",
+    timestamp: "2023-09-17T16:20:05Z",
+  },
+  {
+    id: 12,
+    userName: "David Wilson",
+    lensName: "TechVision",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "DALL-E 3",
+    feedback: "The generated image of the futuristic device lacks the sleek design described. The holographic display is not prominent enough.",
+    prompt: "Design a cutting-edge smartphone with a seamless holographic display. The device should have a sleek, minimalist design with subtle metallic accents.",
+    timestamp: "2023-09-18T17:10:30Z",
+  },
+  {
+    id: 13,
+    userName: "Alice Johnson",
+    lensName: "CityScape AI",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "DALL-E 3",
+    feedback: "The generated image doesn't accurately reflect the style described in the prompt. The colors are off and the composition lacks the requested dynamic feel.",
+    prompt: "Create a vibrant, abstract cityscape with bold, neon colors. Incorporate flowing lines and geometric shapes to give a sense of movement and energy. The style should be reminiscent of futuristic cyberpunk art.",
+    timestamp: "2023-09-15T14:30:22Z",
+  },
+  {
+    id: 14,
+    userName: "Bob Smith",
+    lensName: "NatureLens",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "Stable Diffusion",
+    feedback: "The image lacks detail in the foliage and the lighting doesn't capture the time of day specified in the prompt.",
+    prompt: "Generate a serene forest scene at golden hour, with sunlight filtering through dense, lush foliage. Include a small, clear stream with rocks and fallen leaves.",
+    timestamp: "2023-09-16T15:45:10Z",
+  },
+  {
+    id: 15,
+    userName: "Carol Davis",
+    lensName: "PortraitPro",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "Midjourney",
+    feedback: "The facial features are disproportionate and the skin texture looks artificial. The background doesn't match the described setting.",
+    prompt: "Create a portrait of a middle-aged woman with kind eyes and laugh lines. She should be in a cozy kitchen setting with warm, natural lighting.",
+    timestamp: "2023-09-17T16:20:05Z",
+  },
+  {
+    id: 16,
+    userName: "David Wilson",
+    lensName: "TechVision",
+    visionModel: "GPT-4 Vision",
+    imageGenModel: "DALL-E 3",
+    feedback: "The generated image of the futuristic device lacks the sleek design described. The holographic display is not prominent enough.",
+    prompt: "Design a cutting-edge smartphone with a seamless holographic display. The device should have a sleek, minimalist design with subtle metallic accents.",
+    timestamp: "2023-09-18T17:10:30Z",
+  },
+
 ]
 
 export default function NegativeFeedbackAnalysis() {
@@ -64,22 +185,88 @@ export default function NegativeFeedbackAnalysis() {
   const [itemsPerPage, setItemsPerPage] = useState(8)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const filteredFeedback = mockFeedback.filter(item =>
     (item.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.lensName.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (!selectedDate || new Date(item.timestamp).toDateString() === selectedDate.toDateString())
   )
+  const handleLogout = () => {
+    console.log('Logging out');
+    setIsLoggedIn(false);
+    setEmail("");
+    setPassword("");
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('email');
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+  };
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if ((email === "nori@dashboard.com" && password === "10312024") || 
+        (email === "nayan@dashboard.com" && password === "7069112010")) {
+      console.log('Login successful');
+      setIsLoggedIn(true);
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('email', email);
+      toast({
+        title: "Login Successful",
+        description: "Welcome to the AI Lens Management Dashboard!",
+      });
+    } else {
+      console.log('Login failed');
+      toast({
+        title: "Login Failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const loggedInStatus = localStorage.getItem('isLoggedIn');
+      const storedEmail = localStorage.getItem('email');
+      
+      if (loggedInStatus === 'true' && storedEmail) {
+        setIsLoggedIn(true);
+        setEmail(storedEmail);
+      } else {
+        setIsLoggedIn(false);
+        setEmail('');
+      }
+    };
 
+    checkLoginStatus();
+
+    // Add event listener for storage changes
+    window.addEventListener('storage', checkLoginStatus);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', checkLoginStatus);
+    };
+  }, []);
   const totalPages = Math.ceil(filteredFeedback.length / itemsPerPage)
   const currentFeedback = filteredFeedback.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   return (
-    <div className="container mx-auto p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">AI Lens Performance Analysis</h1>
-      
-      <Card>
-        <CardHeader>
+    <div className="container mx-auto p-4 sm:p-6 margin-top">
+      <Header 
+        isLoggedIn={isLoggedIn}
+        email={email}
+        handleLogout={handleLogout}
+        handleLogin={handleLogin}
+        setEmail={setEmail}
+        setPassword={setPassword}
+      />  
+       {isLoggedIn && ( 
+        <>
+          <Card>
+        <CardHeader  className='less-pad'>
           <CardTitle className="text-xl sm:text-2xl">Negative Feedback Analysis</CardTitle>
         </CardHeader>
         <CardContent>
@@ -174,7 +361,7 @@ export default function NegativeFeedbackAnalysis() {
                     <div className="flex justify-center">
                       <div className="relative w-full aspect-[4/3] sm:aspect-square">
                         <Image
-                          src="/placeholder.svg?height=300&width=400"
+                          src="/flash_favicon.png"
                           alt="Analyzed Image"
                           layout="fill"
                           objectFit="cover"
@@ -240,6 +427,9 @@ export default function NegativeFeedbackAnalysis() {
           </Button>
         </CardFooter>
       </Card>
+        </>
+       )}
+      
     </div>
   )
 }

@@ -1,282 +1,52 @@
-  'use client'
+'use client'
 
-  import { useState, useRef, useEffect } from 'react'
-  import { Camera, Loader2, Copy, Trash2, MoveUp, MoveDown, LogIn, Menu, Upload, Plus, Search } from 'lucide-react'
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-  import { Switch } from "@/components/ui/switch"
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-  import { Button } from "@/components/ui/button"
-  import { Input } from "@/components/ui/input"
-  import { Slider } from "@/components/ui/slider"
-  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter} from "@/components/ui/dialog"
-  import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-  import { Textarea } from "@/components/ui/textarea"
-  import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-  import { Label } from "@/components/ui/label"
-  import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-  import { toast } from "@/components/ui/use-toast"
-  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-  import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-  import { Checkbox } from "@/components/ui/checkbox"
-  import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-  import { Header } from './header'
-  import { ModelDropdown } from './model-dropdown'
+import { useState, useRef, useEffect } from 'react'
+import { Camera, Loader2, Copy, Trash2, MoveUp, MoveDown, LogIn, Menu, Upload, Plus, Search } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Switch } from "@/components/ui/switch"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Slider } from "@/components/ui/slider"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter} from "@/components/ui/dialog"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Textarea } from "@/components/ui/textarea"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Label } from "@/components/ui/label"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { toast } from "@/components/ui/use-toast"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Header } from './header'
+import { ModelDropdown } from './model-dropdown'
 
-  type Lens = {
-    id: number;
-    name: string;
-    display: boolean;
-    creditconsumption: number;
-    promptgenerationflow: string;
-    imageToTextModel: string;
-    maxTokens: number;
-    textToImageModel: string;
-    lastUpdate: Date;
-    prompt: string;
-    stylePrompt: string;
-    negativePrompt: string;
-    Aproxtime: string ;
-    steps: number;
-    cfgScale: number;
-    image: string | null;
-    usageCount: number ;
-  };
-  // Mock data for the lenses
-  const initialLenses: Lens[]= [
-    {
-      id: 1,
-      name: "Quick AI Lens",
-      display: true,
-      creditconsumption: 1,
-      promptgenerationflow: "Flow C",
-      imageToTextModel: "GPT-4-Vision",
-      maxTokens: 1000,
-      textToImageModel: "DALL-E 3",
-      lastUpdate: new Date("2023-05-15"),
-      prompt: "Enhance portrait features",
-      stylePrompt: "Soft lighting, warm tones",
-      negativePrompt: "Harsh shadows, oversaturation",
-      Aproxtime: "10 sec",
-      steps: 30,
-      cfgScale: 7,
-      image: null,
-      usageCount: 150,
-    },
-    {
-      id: 2,
-      name: "Retro Pop",
-      display: false,
-      creditconsumption: 2,
-      promptgenerationflow: "Flow B",
-      imageToTextModel: "CLIP",
-      maxTokens: 500,
-      textToImageModel: "Stable Diffusion",
-      lastUpdate: new Date("2023-06-01"),
-      prompt: "Optimize landscape colors and details",
-      stylePrompt: "Vibrant colors, high contrast",
-      negativePrompt: "Blurry, low contrast",
-      Aproxtime: "20 sec",
-      steps: 40,
-      cfgScale: 8,
-      image: null,
-      usageCount: 75,
-    },
-    {
-      id: 3,
-      name: "Quick AI Lens",
-      display: true,
-      creditconsumption: 1,
-      promptgenerationflow: "Flow C",
-      imageToTextModel: "GPT-4-Vision",
-      maxTokens: 1000,
-      textToImageModel: "DALL-E 3",
-      lastUpdate: new Date("2023-05-15"),
-      prompt: "Enhance portrait features",
-      stylePrompt: "Soft lighting, warm tones",
-      negativePrompt: "Harsh shadows, oversaturation",
-      Aproxtime: "10 sec",
-      steps: 30,
-      cfgScale: 7,
-      image: null,
-      usageCount: 150,
-    },
-    {
-      id: 4,
-      name: "Retro Pop",
-      display: false,
-      creditconsumption: 2,
-      promptgenerationflow: "Flow B",
-      imageToTextModel: "CLIP",
-      maxTokens: 500,
-      textToImageModel: "Stable Diffusion",
-      lastUpdate: new Date("2023-06-01"),
-      prompt: "Optimize landscape colors and details",
-      stylePrompt: "Vibrant colors, high contrast",
-      negativePrompt: "Blurry, low contrast",
-      Aproxtime: "20 sec",
-      steps: 40,
-      cfgScale: 8,
-      image: null,
-      usageCount: 75,
-    },
-    {
-      id: 5,
-      name: "Quick AI Lens",
-      display: true,
-      creditconsumption: 1,
-      promptgenerationflow: "Flow C",
-      imageToTextModel: "GPT-4-Vision",
-      maxTokens: 1000,
-      textToImageModel: "DALL-E 3",
-      lastUpdate: new Date("2023-05-15"),
-      prompt: "Enhance portrait features",
-      stylePrompt: "Soft lighting, warm tones",
-      negativePrompt: "Harsh shadows, oversaturation",
-      Aproxtime: "10 sec",
-      steps: 30,
-      cfgScale: 7,
-      image: null,
-      usageCount: 150,
-    },
-    {
-      id: 6,
-      name: "Retro Pop",
-      display: false,
-      creditconsumption: 2,
-      promptgenerationflow: "Flow B",
-      imageToTextModel: "CLIP",
-      maxTokens: 500,
-      textToImageModel: "Stable Diffusion",
-      lastUpdate: new Date("2023-06-01"),
-      prompt: "Optimize landscape colors and details",
-      stylePrompt: "Vibrant colors, high contrast",
-      negativePrompt: "Blurry, low contrast",
-      Aproxtime: "20 sec",
-      steps: 40,
-      cfgScale: 8,
-      image: null,
-      usageCount: 75,
-    },
-    {
-      id: 7,
-      name: "Quick AI Lens",
-      display: true,
-      creditconsumption: 1,
-      promptgenerationflow: "Flow C",
-      imageToTextModel: "GPT-4-Vision",
-      maxTokens: 1000,
-      textToImageModel: "DALL-E 3",
-      lastUpdate: new Date("2023-05-15"),
-      prompt: "Enhance portrait features",
-      stylePrompt: "Soft lighting, warm tones",
-      negativePrompt: "Harsh shadows, oversaturation",
-      Aproxtime: "10 sec",
-      steps: 30,
-      cfgScale: 7,
-      image: null,
-      usageCount: 150,
-    },
-    {
-      id: 8,
-      name: "Retro Pop",
-      display: false,
-      creditconsumption: 2,
-      promptgenerationflow: "Flow B",
-      imageToTextModel: "CLIP",
-      maxTokens: 500,
-      textToImageModel: "Stable Diffusion",
-      lastUpdate: new Date("2023-06-01"),
-      prompt: "Optimize landscape colors and details",
-      stylePrompt: "Vibrant colors, high contrast",
-      negativePrompt: "Blurry, low contrast",
-      Aproxtime: "20 sec",
-      steps: 40,
-      cfgScale: 8,
-      image: null,
-      usageCount: 75,
-    },
-    {
-      id: 9,
-      name: "Quick AI Lens",
-      display: true,
-      creditconsumption: 1,
-      promptgenerationflow: "Flow C",
-      imageToTextModel: "GPT-4-Vision",
-      maxTokens: 1000,
-      textToImageModel: "DALL-E 3",
-      lastUpdate: new Date("2023-05-15"),
-      prompt: "Enhance portrait features",
-      stylePrompt: "Soft lighting, warm tones",
-      negativePrompt: "Harsh shadows, oversaturation",
-      Aproxtime: "10 sec",
-      steps: 30,
-      cfgScale: 7,
-      image: null,
-      usageCount: 150,
-    },
-    {
-      id: 10,
-      name: "Retro Pop",
-      display: false,
-      creditconsumption: 2,
-      promptgenerationflow: "Flow B",
-      imageToTextModel: "CLIP",
-      maxTokens: 500,
-      textToImageModel: "Stable Diffusion",
-      lastUpdate: new Date("2023-06-01"),
-      prompt: "Optimize landscape colors and details",
-      stylePrompt: "Vibrant colors, high contrast",
-      negativePrompt: "Blurry, low contrast",
-      Aproxtime: "20 sec",
-      steps: 40,
-      cfgScale: 8,
-      image: null,
-      usageCount: 75,
-    },
-    {
-      id: 11,
-      name: "Quick AI Lens",
-      display: true,
-      creditconsumption: 1,
-      promptgenerationflow: "Flow C",
-      imageToTextModel: "GPT-4-Vision",
-      maxTokens: 1000,
-      textToImageModel: "DALL-E 3",
-      lastUpdate: new Date("2023-05-15"),
-      prompt: "Enhance portrait features",
-      stylePrompt: "Soft lighting, warm tones",
-      negativePrompt: "Harsh shadows, oversaturation",
-      Aproxtime: "10 sec",
-      steps: 30,
-      cfgScale: 7,
-      image: null,
-      usageCount: 150,
-    },
-    {
-      id: 12,
-      name: "Retro Pop",
-      display: false,
-      creditconsumption: 2,
-      promptgenerationflow: "Flow B",
-      imageToTextModel: "CLIP",
-      maxTokens: 500,
-      textToImageModel: "Stable Diffusion",
-      lastUpdate: new Date("2023-06-01"),
-      prompt: "Optimize landscape colors and details",
-      stylePrompt: "Vibrant colors, high contrast",
-      negativePrompt: "Blurry, low contrast",
-      Aproxtime: "20 sec",
-      steps: 40,
-      cfgScale: 8,
-      image: null,
-      usageCount: 75,
-    },
-  ]
+type Lens = {
+  id: number;
+  name: string;
+  display: boolean;
+  premiumLens: boolean;
+  creditconsumption: number;
+  promptgenerationflow: string;
+  imageToTextModel: string;
+  maxTokens: number;
+  textToImageModel: string;
+  lastUpdate: Date;
+  prompt: string;
+  stylePrompt: string;
+  negativePrompt: string;
+  Aproxtime: string;
+  steps: number;
+  cfgScale: number;
+  image: string | null;
+  usageCount: number;
+};
 
   export function AiLensDashboard() {
-    const [lenses, setLenses] = useState<Lens[]>(initialLenses);
-    const [isLoading, setIsLoading] = useState(false);
+    const [lenses, setLenses] = useState<Lens[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [systemPrompt, setSystemPrompt] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [email, setEmail] = useState("");
@@ -284,6 +54,7 @@
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [entriesPerPage, setEntriesPerPage] = useState("All")
     const [searchQuery, setSearchQuery] = useState("")
+    const [currentPage, setCurrentPage] = useState(1)
     const [isScrolled, setIsScrolled] = useState(false)
     const [formData, setFormData] = useState({
       name: "",
@@ -295,9 +66,62 @@
       attachment: null as File | null
     });
     const [editingId, setEditingId] = useState<number | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [editingAproxTimeId, setEditingAproxTimeId] = useState<number | null>(null);
-
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [editingAproxTimeId, setEditingAproxTimeId] = useState<number | null>(null);
+  
+    useEffect(() => {
+      fetchLensData();
+    }, []);
+  
+    const fetchLensData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://68.183.64.230/api/dashboard/getAllLensData');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        
+        if (!result.data || !Array.isArray(result.data)) {
+          console.error('API response is not in the expected format:', result);
+          throw new Error('API response is not in the expected format');
+        }
+  
+        const formattedLenses: Lens[] = result.data.map((item: any) => ({
+          id: item._id || '',
+          name: item.lensName || '',
+          display: item.display || false,
+          premiumLens: item.premiumLens || false,
+          creditconsumption: item.lensCredit || 0,
+          promptgenerationflow: item.promptFlow || '',
+          imageToTextModel: item.imageModel || '',
+          maxTokens: parseInt(item.maxTokens) || 0,
+          textToImageModel: item.model || '',
+          lastUpdate: new Date(item.updatedAt || Date.now()),
+          prompt: item.prompt || '',
+          stylePrompt: item.stylePrompt || '',
+          negativePrompt: item.negativePrompt || '',
+          Aproxtime: item.approxTime || '',
+          steps: parseInt(item.civitaiSteps) || 0,
+          cfgScale: parseFloat(item.civitaiCFGScale) || 0,
+          image: item.image || null,
+          usageCount: item.lensUses || 0
+        }));
+  
+        setLenses(formattedLenses);
+        // console.log(formattedLenses);
+      } catch (error) {
+        console.error('Error fetching lens data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch lens data. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
 // Add new handler functions for Aprox Time editing
 const handleAproxTimeEdit = (id: number) => {
   setEditingAproxTimeId(id);
@@ -394,9 +218,25 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
       lens.negativePrompt.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const displayedLenses = entriesPerPage === "All" 
-      ? filteredLenses 
-      : filteredLenses.slice(0, parseInt(entriesPerPage));
+    const totalPages = entriesPerPage === "All" 
+    ? 1 
+    : Math.ceil(filteredLenses.length / parseInt(entriesPerPage))
+
+  const displayedLenses = entriesPerPage === "All" 
+    ? filteredLenses 
+    : filteredLenses.slice(
+        (currentPage - 1) * parseInt(entriesPerPage), 
+        currentPage * parseInt(entriesPerPage)
+      )
+      const handleEntriesPerPageChange = (value: string) => {
+        setEntriesPerPage(value)
+        setCurrentPage(1)
+      }
+
+      const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value)
+        setCurrentPage(1)
+      }
 
     const handleModalSubmit = (e: React.FormEvent) => {
       e.preventDefault();
@@ -439,6 +279,11 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
     const handleDisplayToggle = (id: number) => {
       setLenses(lenses.map(lens => 
         lens.id === id ? { ...lens, display: !lens.display } : lens
+      ))
+    }
+    const handleDisplayToggles = (id: number) => {
+      setLenses(lenses.map(lens => 
+        lens.id === id ? { ...lens, premiumLens: !lens.premiumLens } : lens
       ))
     }
 
@@ -643,6 +488,7 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
     lens: Lens;
     index: number;
     handleDisplayToggle: (id: number) => void;
+    handleDisplayToggles: (id: number) => void;
     handleLensInputChange: (id: number, field: keyof Lens, value: string | number) => void;
     handleCopyLens: (id: number) => void;
     handleMoveLens: (id: number, direction: 'up' | 'down') => void;
@@ -655,6 +501,7 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
     lens, 
     index, 
     handleDisplayToggle, 
+    handleDisplayToggles, 
     handleLensInputChange, 
     handleCopyLens, 
     handleMoveLens,
@@ -696,8 +543,8 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
               onCheckedChange={() => handleDisplayToggle(lens.id)}
             />
             <Switch 
-              checked={lens.display} 
-              onCheckedChange={() => handleDisplayToggle(lens.id)}
+              checked={lens.premiumLens} 
+              onCheckedChange={() => handleDisplayToggles(lens.id)}
             />
           </div>
           
@@ -886,19 +733,17 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
   )
 
   return (
-    
     <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8 margin-top">
-    
       <Header 
-          isLoggedIn={isLoggedIn}
-          email={email}
-          handleLogout={handleLogout}
-          handleLogin={handleLogin}
-          setEmail={setEmail}
-          setPassword={setPassword}
-        />
+        isLoggedIn={isLoggedIn}
+        email={email}
+        handleLogout={handleLogout}
+        handleLogin={handleLogin}
+        setEmail={setEmail}
+        setPassword={setPassword}
+      />
       {isLoggedIn && (
-          <>
+        <>
             <div className="mb-6 custom-flex">
               <Label htmlFor="systemPrompt" className="text-lg font-medium">System Prompt</Label>
               <Textarea
@@ -913,158 +758,52 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
               </Button>
               
             </div>
-            <div className="flex justify-end mb-4">
-          {/* <Button onClick={handleRefresh} disabled={isLoading}>
-            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Refresh"}
-          </Button> */}
-        </div>
-
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Refresh Lenses</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleModalSubmit}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="description" className="text-right">
-                    Description
-                  </Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="category" className="text-right">
-                    Category
-                  </Label>
-                  <Select onValueChange={handleSelectChange} value={formData.category}>
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="option1">Option 1</SelectItem>
-                      <SelectItem value="option2">Option 2</SelectItem>
-                      <SelectItem value="option3">Option 3</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="subscribe" className="text-right">
-                    Subscribe
-                  </Label>
-                  <Checkbox
-                    id="subscribe"
-                    name="subscribe"
-                    checked={formData.subscribe}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, subscribe: checked as boolean }))}
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right">Preference</Label>
-                  <RadioGroup
-                    onValueChange={handleRadioChange}
-                    value={formData.preference}
-                    className="col-span-3"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option1" id="option1" />
-                      <Label htmlFor="option1">Option 1</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option2" id="option2" />
-                      <Label htmlFor="option2">Option 2</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="attachment" className="text-right">
-                    Attachment
-                  </Label>
-                  <Input
-                    id="attachment"
-                    name="attachment"
-                    type="file"
-                    onChange={handleFileChange}
-                    className="col-span-3"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Submit</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-        <div className="mt-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Lens Data</h2>
-                <div className="space-x-2">
-                  
-                  <ModelDropdown onSelect={handleModelSelect} />
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-                <Select value={entriesPerPage} onValueChange={setEntriesPerPage}>
-                  <SelectTrigger className="w-full sm:w-[180px] mb-2 sm:mb-0">
-                    <SelectValue placeholder="Entries per page" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="relative w-full sm:w-auto">
-                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 w-full"
-                  />
-                </div>
+            <div className="mt-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Lens Data</h2>
+              <div className="space-x-2">
+                <ModelDropdown onSelect={handleModelSelect} />
               </div>
             </div>
-            {/* Mobile view */}
-            <div className="md:hidden">
-              {displayedLenses.map((lens, index) => (
-                <LensCard 
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+              <Select value={entriesPerPage} onValueChange={handleEntriesPerPageChange}>
+                <SelectTrigger className="w-full sm:w-[180px] mb-2 sm:mb-0">
+                  <SelectValue placeholder="Entries per page" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="relative w-full sm:w-auto">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="pl-8 w-full"
+                />
+              </div>
+            </div>
+          </div>
+            {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <>
+              {/* Mobile view */}
+              <div className="md:hidden">
+                {lenses.map((lens, index) => (
+                  <LensCard 
                     key={lens.id} 
                     lens={lens} 
                     index={index}
                     handleDisplayToggle={handleDisplayToggle}
+                    handleDisplayToggles={handleDisplayToggles}
                     handleLensInputChange={handleLensInputChange}
                     handleCopyLens={handleCopyLens}
                     handleMoveLens={handleMoveLens}
@@ -1072,230 +811,252 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
                     handleNameEdit={handleNameEdit}
                     handleNameSave={handleNameSave}
                     editingId={editingId}
-                />
-              ))}
-            </div>
-            
-            {/* Desktop view */}
-            <div className="hidden md:block overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">No</TableHead>
-                    <TableHead>Lens Icon</TableHead>
-                    <TableHead>Lens Name</TableHead>
-                    <TableHead>Display</TableHead>
-                    <TableHead>Premium Lens</TableHead>
-                    <TableHead>Credit Consumption</TableHead>
-                    <TableHead>Prompt Generation Flow</TableHead>
-                    <TableHead>Image to Text Model</TableHead>
-                    <TableHead>Max Tokens</TableHead>
-                    <TableHead>Text to Image Model</TableHead>
-                    <TableHead>Prompt</TableHead>
-                    <TableHead>Style Prompt</TableHead>
-                    <TableHead>Negative Prompt</TableHead>
-                    <TableHead>Steps</TableHead>
-                    <TableHead>CFG Scale</TableHead>
-                    <TableHead>Aprox Time</TableHead>
-                    <TableHead>Usage Count</TableHead>
-                    <TableHead>Last Update</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayedLenses.map((lens, index) => (
-                    <TableRow key={lens.id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center w-[65px]">
+                  />
+                ))}
+              </div>
+              {/* Desktop view */}
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">No</TableHead>
+                        <TableHead>Lens Icon</TableHead>
+                        <TableHead className='text-center'>Lens Name</TableHead>
+                        <TableHead>Display</TableHead>
+                        <TableHead>Premium Lens</TableHead>
+                        <TableHead>Credit Consumption</TableHead>
+                        <TableHead>Prompt Generation Flow</TableHead>
+                        <TableHead>Image to Text Model</TableHead>
+                        <TableHead>Max Tokens</TableHead>
+                        <TableHead>Text to Image Model</TableHead>
+                        <TableHead>Prompt</TableHead>
+                        <TableHead>Style Prompt</TableHead>
+                        <TableHead>Negative Prompt</TableHead>
+                        <TableHead>Steps</TableHead>
+                        <TableHead>CFG Scale</TableHead>
+                        <TableHead>Aprox Time</TableHead>
+                        <TableHead>Usage Count</TableHead>
+                        <TableHead>Last Update</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {displayedLenses.map((lens, index) => (
+                        <TableRow key={lens.id}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center w-[65px]">
+                              
+                              <ImageUploadDialog 
+                                lens={lens} 
+                                onUpload={(file) => handleImageUpload(lens.id, file)} 
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-center  w-[150px] wi-conent">
+                              {editingId === lens.id ? (
+                                <Input
+                                  ref={inputRef}
+                                  value={lens.name}
+                                  onChange={(e) => handleLensInputChange(lens.id, 'name', e.target.value)}
+                                  onBlur={() => handleNameSave(lens.id, lens.name)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleNameSave(lens.id, lens.name);
+                                    }
+                                  }}
+                                  className="w-full"
+                                />
+                              ) : (
+                                <span
+                                  className="text-center font-medium cursor-pointer"
+                                  onClick={() => handleNameEdit(lens.id)}
+                                >
+                                  {lens.name}
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Switch 
+                              checked={lens.display} 
+                              onCheckedChange={() => handleDisplayToggle(lens.id)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Switch 
+                              checked={lens.premiumLens} 
+                              onCheckedChange={() => handleDisplayToggles(lens.id)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                            type="number" 
+                            value={lens.creditconsumption} 
+                            onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
+                              className="w-[150px]"
+                            />
+                          </TableCell>
+                          <TableCell>
+                          <Select 
+                              value={lens.promptgenerationflow} 
+                              onValueChange={(value) => handleLensInputChange(lens.id, 'promptgenerationflow', value)}
+                            >
+                              <SelectTrigger className="w-full w-[180px]">
+                                <SelectValue placeholder="Select model" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Flow A">Flow A</SelectItem>
+                                <SelectItem value="Flow B">Flow B</SelectItem>
+                                <SelectItem value="Flow C">Flow C</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
+                            <Select 
+                              value={lens.imageToTextModel} 
+                              onValueChange={(value) => handleLensInputChange(lens.id, 'imageToTextModel', value)}
+                            >
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select model" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="GPT-4-Vision">GPT-4-Vision</SelectItem>
+                                <SelectItem value="CLIP">CLIP</SelectItem>
+                                <SelectItem value="ImageBind">ImageBind</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
                           
-                          <ImageUploadDialog 
-                            lens={lens} 
-                            onUpload={(file) => handleImageUpload(lens.id, file)} 
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-items-center items-center w-[150px] wi-conent">
-                          {editingId === lens.id ? (
-                            <Input
-                              ref={inputRef}
-                              value={lens.name}
-                              onChange={(e) => handleLensInputChange(lens.id, 'name', e.target.value)}
-                              onBlur={() => handleNameSave(lens.id, lens.name)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  handleNameSave(lens.id, lens.name);
-                                }
-                              }}
-                              className="w-full"
+                          <TableCell>
+                            <Input 
+                              type="number" 
+                              value={lens.maxTokens} 
+                              onChange={(e) => handleLensInputChange(lens.id, 'maxTokens', parseInt(e.target.value))}
+                              className="w-[100px]"
                             />
-                          ) : (
-                            <span
-                              className="text-center font-medium cursor-pointer"
-                              onClick={() => handleNameEdit(lens.id)}
+                          </TableCell>
+                          <TableCell>
+                            <Select 
+                              value={lens.textToImageModel} 
+                              onValueChange={(value) => handleLensInputChange(lens.id, 'textToImageModel', value)}
                             >
-                              {lens.name}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Switch 
-                          checked={lens.display} 
-                          onCheckedChange={() => handleDisplayToggle(lens.id)}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Switch 
-                          checked={lens.display} 
-                          onCheckedChange={() => handleDisplayToggle(lens.id)}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input 
-                        type="number" 
-                        value={lens.creditconsumption} 
-                        onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
-                          className="w-[150px]"
-                        />
-                      </TableCell>
-                      <TableCell>
-                      <Select 
-                          value={lens.promptgenerationflow} 
-                          onValueChange={(value) => handleLensInputChange(lens.id, 'promptgenerationflow', value)}
-                        >
-                          <SelectTrigger className="w-full w-[180px]">
-                            <SelectValue placeholder="Select model" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Flow A">Flow A</SelectItem>
-                            <SelectItem value="Flow B">Flow B</SelectItem>
-                            <SelectItem value="Flow C">Flow C</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <Select 
-                          value={lens.imageToTextModel} 
-                          onValueChange={(value) => handleLensInputChange(lens.id, 'imageToTextModel', value)}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select model" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="GPT-4-Vision">GPT-4-Vision</SelectItem>
-                            <SelectItem value="CLIP">CLIP</SelectItem>
-                            <SelectItem value="ImageBind">ImageBind</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Input 
-                          type="number" 
-                          value={lens.maxTokens} 
-                          onChange={(e) => handleLensInputChange(lens.id, 'maxTokens', parseInt(e.target.value))}
-                          className="w-[100px]"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Select 
-                          value={lens.textToImageModel} 
-                          onValueChange={(value) => handleLensInputChange(lens.id, 'textToImageModel', value)}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select model" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="DALL-E 3">DALL-E 3</SelectItem>
-                            <SelectItem value="Stable Diffusion">Stable Diffusion</SelectItem>
-                            <SelectItem value="Midjourney">Midjourney</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <PromptPopover
-                          value={lens.prompt}
-                          onChange={(value) => handleLensInputChange(lens.id, 'prompt', value)}
-                          title="Edit Prompt"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <PromptPopover
-                          value={lens.stylePrompt}
-                          onChange={(value) => handleLensInputChange(lens.id, 'stylePrompt', value)}
-                          title="Edit Style Prompt"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <PromptPopover
-                          value={lens.negativePrompt}
-                          onChange={(value) => handleLensInputChange(lens.id, 'negativePrompt', value)}
-                          title="Edit Negative Prompt"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input 
-                          type="number" 
-                          value={lens.steps} 
-                          onChange={(e) => handleLensInputChange(lens.id, 'steps', parseInt(e.target.value))}
-                          className="w-[80px]"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input 
-                          type="number" 
-                          value={lens.cfgScale} 
-                          onChange={(e) => handleLensInputChange(lens.id, 'cfgScale', parseFloat(e.target.value))}
-                          className="w-[80px]"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-items-center items-center w-[80px]">
-                          {editingAproxTimeId === lens.id ? (
-                            <Input
-                              value={lens.Aproxtime}
-                              onChange={(e) => handleLensInputChange(lens.id, 'Aproxtime', e.target.value)}
-                              onBlur={() => handleAproxTimeSave(lens.id, lens.Aproxtime)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  handleAproxTimeSave(lens.id, lens.Aproxtime);
-                                }
-                              }}
-                              className="w-full"
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select model" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="DALL-E 3">DALL-E 3</SelectItem>
+                                <SelectItem value="Stable Diffusion">Stable Diffusion</SelectItem>
+                                <SelectItem value="Midjourney">Midjourney</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
+                            <PromptPopover
+                              value={lens.prompt}
+                              onChange={(value) => handleLensInputChange(lens.id, 'prompt', value)}
+                              title="Edit Prompt"
                             />
-                          ) : (
-                            <span
-                              className="text-center font-medium cursor-pointer"
-                              onClick={() => handleAproxTimeEdit(lens.id)}
-                            >
-                              {lens.Aproxtime}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>{lens.usageCount}</TableCell>
-                      <TableCell>{lens.lastUpdate.toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="icon" onClick={() => handleCopyLens(lens.id)}>
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <DeleteConfirmation onConfirm={() => handleDeleteLens(lens.id)} />
-                          <Button variant="outline" size="icon" onClick={() => handleMoveLens(lens.id, 'up')} disabled={index === 0}>
-                            <MoveUp className="h-4 w-4" />
-                          </Button>
-                          <Button variant="outline" size="icon" onClick={() => handleMoveLens(lens.id, 'down')} disabled={index === lenses.length - 1}>
-                            <MoveDown className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                          </TableCell>
+                          <TableCell>
+                            <PromptPopover
+                              value={lens.stylePrompt}
+                              onChange={(value) => handleLensInputChange(lens.id, 'stylePrompt', value)}
+                              title="Edit Style Prompt"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <PromptPopover
+                              value={lens.negativePrompt}
+                              onChange={(value) => handleLensInputChange(lens.id, 'negativePrompt', value)}
+                              title="Edit Negative Prompt"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              type="number" 
+                              value={lens.steps} 
+                              onChange={(e) => handleLensInputChange(lens.id, 'steps', parseInt(e.target.value))}
+                              className="w-[80px]"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              type="number" 
+                              value={lens.cfgScale} 
+                              onChange={(e) => handleLensInputChange(lens.id, 'cfgScale', parseFloat(e.target.value))}
+                              className="w-[80px]"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-items-center items-center w-[80px]">
+                              {editingAproxTimeId === lens.id ? (
+                                <Input
+                                  value={lens.Aproxtime}
+                                  onChange={(e) => handleLensInputChange(lens.id, 'Aproxtime', e.target.value)}
+                                  onBlur={() => handleAproxTimeSave(lens.id, lens.Aproxtime)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleAproxTimeSave(lens.id, lens.Aproxtime);
+                                    }
+                                  }}
+                                  className="w-full"
+                                />
+                              ) : (
+                                <span
+                                  className="text-center font-medium cursor-pointer"
+                                  onClick={() => handleAproxTimeEdit(lens.id)}
+                                >
+                                  {lens.Aproxtime}
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>{lens.usageCount}</TableCell>
+                          <TableCell>{lens.lastUpdate.toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="icon" onClick={() => handleCopyLens(lens.id)}>
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                              <DeleteConfirmation onConfirm={() => handleDeleteLens(lens.id)} />
+                              <Button variant="outline" size="icon" onClick={() => handleMoveLens(lens.id, 'up')} disabled={index === 0}>
+                                <MoveUp className="h-4 w-4" />
+                              </Button>
+                              <Button variant="outline" size="icon" onClick={() => handleMoveLens(lens.id, 'down')} disabled={index === lenses.length - 1}>
+                                <MoveDown className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {/* Pagination */}
+              {entriesPerPage !== "All" && (
+                <div className="flex justify-center mt-4 align-items-center">
+                  <Button
+                    variant="outline" 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <span className="mx-4">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+              </>
+            )}
           </>
         )}
       </div>
