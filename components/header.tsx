@@ -16,10 +16,17 @@ interface HeaderProps {
 }
 
 export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail, setPassword }: HeaderProps) {
+  const [isNegativeDashboard, setIsNegativeDashboard] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);  // This ensures the code only runs on the client
+    // This ensures the code runs only on the client side
+    setIsClient(true);
+
+    // Check if the current path is '/negative-analysis'
+    if (typeof window !== 'undefined') {
+      setIsNegativeDashboard(window.location.pathname === '/negative-analysis');
+    }
   }, []);
 
   const openNegativeDashboard = () => {
@@ -36,10 +43,18 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
       </h1>
       {isLoggedIn ? (
         <div className="flex items-center space-x-2 mobile-flex">
-          <Button variant="outline" onClick={openNegativeDashboard}>
-            <LayoutDashboard className="h-4 w-4 mr-2" />
-            Negative Analysis
-          </Button>
+          {/* Conditional rendering based on the current page */}
+          {!isNegativeDashboard && (
+            <Button variant="outline" onClick={openNegativeDashboard}>
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Negative Analysis
+            </Button>
+          )}
+          {isNegativeDashboard && (
+            <Button variant="outline" onClick={() => (window.location.href = '/')}>
+              Back to Main Dashboard
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">{email}</Button>
@@ -52,11 +67,11 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
       ) : (
         <Dialog>
           <DialogTrigger asChild>
-            <div className='mobile_set flex'>
+            <div className="mobile_set flex">
               <Button>Login</Button>
             </div>
           </DialogTrigger>
-          <DialogContent className='z-index-999 login-popup'>
+          <DialogContent className="z-index-999 login-popup">
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
             </DialogHeader>
