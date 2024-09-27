@@ -23,6 +23,41 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Header } from './header'
 import { ModelDropdown } from './model-dropdown'
 
+// Utility function for decryption
+async function decryptField(encryptedData: string): Promise<string> {
+  try {
+    const { key, iv, encryptedData: encData } = JSON.parse(encryptedData);
+
+    // Convert hex strings to Uint8Array
+    const keyBuffer = new Uint8Array(key.match(/.{1,2}/g)!.map((byte: string) => parseInt(byte, 16)));
+    const ivBuffer = new Uint8Array(iv.match(/.{1,2}/g)!.map((byte: string) => parseInt(byte, 16)));
+    const encryptedBuffer = new Uint8Array(encData.match(/.{1,2}/g)!.map((byte: string) => parseInt(byte, 16)));
+
+    // Import the key
+    const importedKey = await window.crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      { name: "AES-CBC" },
+      false,
+      ["decrypt"]
+    );
+
+    // Decrypt the data
+    const decryptedBuffer = await window.crypto.subtle.decrypt(
+      { name: "AES-CBC", iv: ivBuffer },
+      importedKey,
+      encryptedBuffer
+    );
+
+    // Convert the decrypted buffer to a string
+    const decoder = new TextDecoder();
+    return decoder.decode(decryptedBuffer);
+  } catch (error) {
+    console.error("Decryption failed:", error);
+    return ""; // Return an empty string or handle the error as needed
+  }
+}
+
 type Lens = {
   id: number;
   name: string;
@@ -42,7 +77,7 @@ type Lens = {
   cfgScale: number;
   image: string | null;
   usageCount: number;
-};
+};  
 
   export function AiLensDashboard() {
     const [lenses, setLenses] = useState<Lens[]>([]);
@@ -76,7 +111,7 @@ type Lens = {
     const fetchLensData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://flashailens.com/api/dashboard/getAllLensData');
+        const response = await fetch('http://68.183.64.230/api/dashboard/getAllData');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -87,29 +122,38 @@ type Lens = {
           throw new Error('API response is not in the expected format');
         }
   
-        const formattedLenses: Lens[] = result.data.map((item: any) => ({
-          id: item._id || '',
-          name: item.lensName || '',
-          display: item.display || false,
-          premiumLens: item.premiumLens || false,
-          creditconsumption: item.lensCredit || 0,
-          promptgenerationflow: item.promptFlow || '',
-          imageToTextModel: item.imageModel || '',
-          maxTokens: parseInt(item.maxTokens) || 0,
-          textToImageModel: item.model || '',
-          lastUpdate: new Date(item.updatedAt || Date.now()),
-          prompt: item.prompt || '',
-          stylePrompt: item.stylePrompt || '',
-          negativePrompt: item.negativePrompt || '',
-          Aproxtime: item.approxTime || '',
-          steps: parseInt(item.civitaiSteps) || 0,
-          cfgScale: parseFloat(item.civitaiCFGScale) || 0,
-          image: item.image || null,
-          usageCount: item.lensUses || 0
+        const formattedLenses: Lens[] = await Promise.all(result.data.map(async (item: any) => {
+          const decryptIfNeeded = async (value: any) => {
+            if (typeof value === 'string' && value.startsWith('{')) {
+              return await decryptField(value);
+            }
+            return value;
+          };
+  
+          return {
+            id: item._id || '',
+            name: await decryptIfNeeded(item.lensName) || '',
+            display: item.display || false,
+            premiumLens: item.premiumLens || false,
+            creditconsumption: parseInt(await decryptIfNeeded(item.lensCredit)) || 0,
+            promptgenerationflow: await decryptIfNeeded(item.promptFlow) || '',
+            imageToTextModel: await decryptIfNeeded(item.model) || '',
+            maxTokens: parseInt(await decryptIfNeeded(item.maxTokens)) || 0,
+            textToImageModel: await decryptIfNeeded(item.imageModel) || '',
+            lastUpdate: new Date(item.updatedAt || Date.now()),
+            prompt: await decryptIfNeeded(item.prompt) || '',
+            stylePrompt: await decryptIfNeeded(item.stylePrompt) || '',
+            negativePrompt: await decryptIfNeeded(item.negativePrompt) || '',
+            Aproxtime: await decryptIfNeeded(item.approxTime) || '',
+            steps: parseInt(await decryptIfNeeded(item.civitaiSteps)) || 0,
+            cfgScale: parseFloat(await decryptIfNeeded(item.civitaiCFGScale)) || 0,
+            image: item.image || null,
+            usageCount: parseInt(await decryptIfNeeded(item.lensUses)) || 0
+          };
         }));
   
         setLenses(formattedLenses);
-        // console.log(formattedLenses);
+        console.log(formattedLenses);
       } catch (error) {
         console.error('Error fetching lens data:', error);
         toast({
@@ -598,9 +642,13 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
                       <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="GPT-4-Vision">GPT-4-Vision</SelectItem>
-                      <SelectItem value="CLIP">CLIP</SelectItem>
-                      <SelectItem value="ImageBind">ImageBind</SelectItem>
+                      <SelectItem value="claude-3-opus-20240229">claude-3-opus</SelectItem>
+                      <SelectItem value="claude-3-haiku-20240307">claude-3-haiku</SelectItem>
+                      <SelectItem value="claude-3-sonnet-20240229">claude-3-sonnet</SelectItem>
+                      <SelectItem value="claude-3-5-sonnet-20240620">claude-3-5-sonnet</SelectItem>
+                      <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+                      <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+                      <SelectItem value="gpt-4-turbo">gpt-4-turbo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -614,9 +662,21 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
                       <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="DALL-E 3">DALL-E 3</SelectItem>
-                      <SelectItem value="Stable Diffusion">Stable Diffusion</SelectItem>
-                      <SelectItem value="Midjourney">Midjourney</SelectItem>
+                      <SelectItem value="sd3">sd3</SelectItem>
+                      <SelectItem value="sd3-large-turbo">sd3-large-turbo</SelectItem>
+                      <SelectItem value="sd3-large">sd3-large</SelectItem>
+                      <SelectItem value="core">core</SelectItem>
+                      <SelectItem value="sdxl-1.0">sdxl-1.0</SelectItem>
+                      <SelectItem value="sd-1.6">sd-1.6</SelectItem>
+                      <SelectItem value="dall-e-3">dall-e-3</SelectItem>
+                      <SelectItem value="Dreamshaper XL">Dreamshaper XL</SelectItem>
+                      <SelectItem value="Anime model">Animagine XL</SelectItem>
+                      <SelectItem value="Juggernaut-XL">Juggernaut XL</SelectItem>
+                      <SelectItem  value="flux-dev">flux-dev</SelectItem>
+                      <SelectItem  value="flux-schnell">flux-schnell</SelectItem>
+                      <SelectItem  value="flux-pro">flux-pro</SelectItem>
+                      <SelectItem  value="flux-realism">flux-realism</SelectItem>
+                      <SelectItem  value="face-Gen">face-Gen</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -922,9 +982,13 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="GPT-4-Vision">GPT-4-Vision</SelectItem>
-                                <SelectItem value="CLIP">CLIP</SelectItem>
-                                <SelectItem value="ImageBind">ImageBind</SelectItem>
+                                <SelectItem value="claude-3-opus-20240229">claude-3-opus</SelectItem>
+                                <SelectItem value="claude-3-haiku-20240307">claude-3-haiku</SelectItem>
+                                <SelectItem value="claude-3-sonnet-20240229">claude-3-sonnet</SelectItem>
+                                <SelectItem value="claude-3-5-sonnet-20240620">claude-3-5-sonnet</SelectItem>
+                                <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+                                <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+                                <SelectItem value="gpt-4-turbo">gpt-4-turbo</SelectItem>
                               </SelectContent>
                             </Select>
                           </TableCell>
@@ -946,9 +1010,21 @@ const handleAproxTimeSave = (id: number, newAproxTime: string) => {
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="DALL-E 3">DALL-E 3</SelectItem>
-                                <SelectItem value="Stable Diffusion">Stable Diffusion</SelectItem>
-                                <SelectItem value="Midjourney">Midjourney</SelectItem>
+                                <SelectItem value="sd3">sd3</SelectItem>
+                                <SelectItem value="sd3-large-turbo">sd3-large-turbo</SelectItem>
+                                <SelectItem value="sd3-large">sd3-large</SelectItem>
+                                <SelectItem value="core">core</SelectItem>
+                                <SelectItem value="sdxl-1.0">sdxl-1.0</SelectItem>
+                                <SelectItem value="sd-1.6">sd-1.6</SelectItem>
+                                <SelectItem value="dall-e-3">dall-e-3</SelectItem>
+                                <SelectItem value="Dreamshaper XL">Dreamshaper XL</SelectItem>
+                                <SelectItem value="Anime model">Animagine XL</SelectItem>
+                                <SelectItem value="Juggernaut-XL">Juggernaut XL</SelectItem>
+                                <SelectItem  value="flux-dev">flux-dev</SelectItem>
+                                <SelectItem  value="flux-schnell">flux-schnell</SelectItem>
+                                <SelectItem  value="flux-pro">flux-pro</SelectItem>
+                                <SelectItem  value="flux-realism">flux-realism</SelectItem>
+                                <SelectItem  value="face-Gen">face-Gen</SelectItem>
                               </SelectContent>
                             </Select>
                           </TableCell>
