@@ -37,7 +37,9 @@ textarea.max-width {
     max-height: 400px;
     min-height: 200px;
 }
-
+.width-60rem{
+    max-width: 60rem !important;
+}
 
 /* media */
 @media(max-width:767px){
@@ -45,11 +47,17 @@ textarea.max-width {
         flex-direction: column;
         row-gap: 15px;
     }
+    .mb-01{
+        margin-bottom: 10px;
+    }
     textarea.latest-bio {
         width: 100% !important;
     }
     .mobile-de {
         width: 150%;
+    }
+    .width-60rem {
+        max-width: 28rem !important;
     }
     
     .mnobile-flex-dev {
@@ -82,6 +90,9 @@ textarea.max-width {
     }
     .login-popup {
         width: 90%;
+        border-radius: 8px;
+    }
+    .border-0ra{
         border-radius: 8px;
     }
 }

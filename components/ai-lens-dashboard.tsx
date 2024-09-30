@@ -22,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Header } from './header'
 import { ModelDropdown } from './model-dropdown'
+import { log } from 'console'
 
 // Utility function for decryption
 async function decryptField(encryptedData: string): Promise<string> {
@@ -111,7 +112,7 @@ type Lens = {
     const fetchLensData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://flashailens.com/api/dashboard/getAllData');
+        const response = await fetch('http://68.183.64.230/api/dashboard/getAllData');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -154,6 +155,7 @@ type Lens = {
   
         setLenses(formattedLenses);
         console.log(formattedLenses);
+        
       } catch (error) {
         console.error('Error fetching lens data:', error);
         toast({
