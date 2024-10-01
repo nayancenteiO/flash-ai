@@ -154,7 +154,6 @@ type Lens = {
         }));
   
         setLenses(formattedLenses);
-        console.log(formattedLenses);
         
       } catch (error) {
         console.error('Error fetching lens data:', error);

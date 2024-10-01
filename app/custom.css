@@ -40,7 +40,9 @@ textarea.max-width {
 .width-60rem{
     max-width: 60rem !important;
 }
-
+div[role="dialog"] {
+    outline: none !important;
+}
 /* media */
 @media(max-width:767px){
     .custom-flex {
