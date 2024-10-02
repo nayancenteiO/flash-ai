@@ -236,7 +236,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
   useEffect(() => {
     const fetchPromptData = async () => {
       try {
-        const response = await fetch('http://68.183.64.230/api/dashboard/getPromptValue');
+        const response = await fetch('https://flashailens.com/api/dashboard/getPromptValue');
         const data: PromptAPIResponse = await response.json();
         setSystemPrompt(data.data.generalSystemPrompt);
         setRemixPrompt(data.data.prompt);
@@ -248,7 +248,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
 
     const fetchNegativeKeywords = async () => {
       try {
-        const response = await fetch('http://68.183.64.230/api/dashboard/getNegativeKeywords');
+        const response = await fetch('https://flashailens.com/api/dashboard/getNegativeKeywords');
         const data: NegativeKeywordAPIResponse = await response.json();
         // Store both _id and negativeKeyword
         setNegativeKeywords(data.data.map(item => ({
@@ -262,7 +262,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
 
     const fetchFirebaseUserData = async () => {
       try {
-        const response = await fetch('http://68.183.64.230/api/dashboard/getFirebaseUser');
+        const response = await fetch('https://flashailens.com/api/dashboard/getFirebaseUser');
         const data: FirebaseUserAPIResponse = await response.json();
         setTestingValues({
           freeMultiImage: data.data.freeMultiImage,
@@ -310,7 +310,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
     if (keywordToRemove._id) {
       // Make API call to delete the keyword from the database
       try {
-        const response = await fetch(`http://68.183.64.230/api/dashboard/deleteNegativeKeywords/${keywordToRemove._id}`, {
+        const response = await fetch(`https://flashailens.com/api/dashboard/deleteNegativeKeywords/${keywordToRemove._id}`, {
           method: 'DELETE',
         });
 
@@ -340,7 +340,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
             modelId: keywordObj.negativeKeyword
           }));
 
-          const response = await fetch('http://68.183.64.230/api/dashboard/addNegativeKeywords', {
+          const response = await fetch('https://flashailens.com/api/dashboard/addNegativeKeywords', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -365,7 +365,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
         break;
       case "System Prompt":
         try {
-          const response = await fetch('http://68.183.64.230/api/dashboard/updatePromptValue', {
+          const response = await fetch('https://flashailens.com/api/dashboard/updatePromptValue', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -385,7 +385,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
         break;
       case "Remix Prompt":
         try {
-          const response = await fetch('http://68.183.64.230/api/dashboard/updatePromptValue', {
+          const response = await fetch('https://flashailens.com/api/dashboard/updatePromptValue', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -408,7 +408,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
         break;
       case "Update Testing And User Value":
         try {
-          const response = await fetch('http://68.183.64.230/api/dashboard/updateFirebaseUserValue', {
+          const response = await fetch('https://flashailens.com/api/dashboard/updateFirebaseUserValue', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

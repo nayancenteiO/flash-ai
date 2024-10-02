@@ -61,7 +61,6 @@ async function decryptField(encryptedData: string): Promise<string> {
 
 type Lens = {
   id: number;
-  lensId: string; // New field for the lens ID
   name: string;
   display: boolean;
   premiumLens: boolean;
@@ -79,7 +78,7 @@ type Lens = {
   cfgScale: number;
   image: string | null;
   usageCount: number;
-}; 
+};  
 
   export function AiLensDashboard() {
     const [lenses, setLenses] = useState<Lens[]>([]);
@@ -113,11 +112,12 @@ type Lens = {
     const fetchLensData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://68.183.64.230/api/dashboard/getAllData');
+        const response = await fetch('https://flashailens.com/api/dashboard/getAllData');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
+        
         if (!result.data || !Array.isArray(result.data)) {
           console.error('API response is not in the expected format:', result);
           throw new Error('API response is not in the expected format');
@@ -133,7 +133,6 @@ type Lens = {
   
           return {
             id: item._id || '',
-            lensId: item.lensId || '',
             name: await decryptIfNeeded(item.lensName) || '',
             display: item.display || false,
             premiumLens: item.premiumLens || false,
@@ -168,15 +167,15 @@ type Lens = {
       }
     };
   
-    // Add new handler functions for Aprox Time editing
-    const handleAproxTimeEdit = (id: number) => {
-      setEditingAproxTimeId(id);
-    };
+// Add new handler functions for Aprox Time editing
+const handleAproxTimeEdit = (id: number) => {
+  setEditingAproxTimeId(id);
+};
 
-    const handleAproxTimeSave = (id: number, newAproxTime: string) => {
-      handleLensInputChange(id, 'Aproxtime', newAproxTime);
-      setEditingAproxTimeId(null);
-    };
+const handleAproxTimeSave = (id: number, newAproxTime: string) => {
+  handleLensInputChange(id, 'Aproxtime', newAproxTime);
+  setEditingAproxTimeId(null);
+};
 
 
     useEffect(() => {
@@ -189,43 +188,9 @@ type Lens = {
       setEditingId(id);
     };
   
-    const handleNameSave = async (id: number, newName: string) => {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append('lensName', newName);
-      try {
-        const response = await fetch(`http://68.183.64.230/api/dashboard/updateData/${id}`, {
-          method: 'POST',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to update lens name');
-        }
-  
-        const result = await response.json();
-  
-        // Update the local state
-        setLenses(lenses.map(lens => 
-          lens.id === id ? { ...lens, name: newName } : lens
-        ));
-  
-        setEditingId(null);
-  
-        toast({
-          title: "Success",
-          description: "Lens name updated successfully",
-        });
-      } catch (error) {
-        console.error('Error updating lens name:', error);
-        toast({
-          title: "Error",
-          description: "Failed to update lens name. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
+    const handleNameSave = (id: number, newName: string) => {
+      handleLensInputChange(id, 'name', newName);
+      setEditingId(null);
     };
 
     useEffect(() => {
@@ -247,7 +212,6 @@ type Lens = {
         window.removeEventListener('scroll', handleScroll);
       };
     }, []);
-
     useEffect(() => {
       const checkLoginStatus = () => {
         const loggedInStatus = localStorage.getItem('isLoggedIn');
@@ -281,7 +245,6 @@ type Lens = {
         setIsLoading(false)
       }, 1000)
     }
-
     const handleModelSelect = (option: string) => {
       // Handle the selected option here
       console.log(`Selected option: ${option}`)
@@ -291,7 +254,6 @@ type Lens = {
       })
       // You can add more specific logic for each option here
     }
-    
     const filteredLenses = lenses.filter(lens =>
       lens.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       lens.imageToTextModel.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -371,59 +333,11 @@ type Lens = {
     }
 
     const handleLensInputChange = (id: number, field: keyof Lens, value: string | number) => {
-      if (field === 'promptgenerationflow') {
-        handlePromptGenerationFlowChange(id, value as string);
-      } else {
-        setLenses(lenses.map(lens => 
-          lens.id === id ? { ...lens, [field]: value } : lens
-        ));
-      }
-    };
-    
-    const handlePromptGenerationFlowChange = async (id: number, value: string) => {
-      const lens = lenses.find(l => l.id === id);
-      if (!lens) {
-        console.error('Lens not found');
-        return;
-      }
-      console.log(lens);
-      try {
-        const response = await fetch(`http://68.183.64.230/api/dashboard/updatePromptFlow`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            promptFlow: value,
-            lensId: lens.lensId // Use the lensId from the lens object
-          }),
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to update Prompt Generation Flow');
-        }
-  
-        const result = await response.json();
-  
-        // Update the local state
-        setLenses(lenses.map(l => 
-          l.id === id ? { ...l, promptgenerationflow: value } : l
-        ));
-  
-        toast({
-          title: "Success",
-          description: "Prompt Generation Flow updated successfully",
-        });
-      } catch (error) {
-        console.error('Error updating Prompt Generation Flow:', error);
-        toast({
-          title: "Error",
-          description: "Failed to update Prompt Generation Flow. Please try again.",
-          variant: "destructive",
-        });
-      }
-    };
-  
+      setLenses(lenses.map(lens => 
+        lens.id === id ? { ...lens, [field]: value } : lens
+      ))
+    }
+
     const handleCopyLens = (id: number) => {
       const lensToCopy = lenses.find(lens => lens.id === id)
       if (lensToCopy) {
@@ -490,38 +404,15 @@ type Lens = {
       });
     };
 
-    const handleImageUpload = async (id: number, file: File) => {
-      const formData = new FormData();
-      formData.append('image', file);
-      try {
-        const response = await fetch(`http://68.183.64.230/api/dashboard/updateData/${id}`, {
-          method: 'POST',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to upload image');
-        }
-  
-        const result = await response.json();
-        
-        // Update the lens state with the new image URL
-        // setLenses(lenses.map(lens => 
-        //   lens.id === id ? { ...lens, image: result.image } : lens
-        // ));
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          setLenses(lenses.map(lens => 
-            lens.id === id ? { ...lens, image: e.target?.result as string | null } : lens
-          ))
-        }
-        reader.readAsDataURL(file);
-        // Toast message is now handled in the ImageUploadDialog component
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        throw error; // Rethrow the error to be handled in the ImageUploadDialog
+    const handleImageUpload = (id: number, file: File) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setLenses(lenses.map(lens => 
+          lens.id === id ? { ...lens, image: e.target?.result as string | null } : lens
+        ))
       }
-    };
+      reader.readAsDataURL(file)
+    }
 
     interface PromptPopoverProps {
       value: string;
@@ -600,76 +491,44 @@ type Lens = {
   )
   interface ImageUploadDialogProps {
     lens: Lens;
-    onUpload: (id: number, file: File) => Promise<void>;
+    onUpload: (file: File) => void;
   }
-  const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({ lens, onUpload }) => {
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
-  
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files[0]) {
-        setSelectedFile(e.target.files[0]);
-      }
-    };
-  
-    const handleUpload = async () => {
-      if (selectedFile) {
-        setIsUploading(true);
-        try {
-          await onUpload(lens.id, selectedFile);
-          setSelectedFile(null);
-          toast({
-            title: "Success",
-            description: "Image uploaded successfully",
-          });
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          toast({
-            title: "Error",
-            description: "Failed to upload image. Please try again.",
-            variant: "destructive",
-          });
-        } finally {
-          setIsUploading(false);
-        }
-      }
-    };
-  
-    return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Avatar className="h-10 w-10 cursor-pointer">
-            <AvatarImage src={lens.image || undefined} alt={lens.name} />
-            <AvatarFallback>{lens.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Upload Image for {lens.name}</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="picture" className="text-right">
-                Picture
-              </Label>
-              <Input
-                id="picture"
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="col-span-3"
-              />
-            </div>
+  const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({ lens, onUpload }) => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Avatar className="h-10 w-10 cursor-pointer">
+          <AvatarImage src={lens.image || undefined} alt={lens.name} />
+          <AvatarFallback>{lens.name.charAt(0)}</AvatarFallback>
+        </Avatar>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Upload Image for {lens.name}</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="picture" className="text-right">
+              Picture
+            </Label>
+            <Input
+              id="picture"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  onUpload(e.target.files[0])
+                }
+              }}
+              className="col-span-3"
+            />
           </div>
-          <DialogFooter>
-            <Button type="submit" onClick={handleUpload} disabled={!selectedFile || isUploading}>
-              {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Upload"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  };
+        </div>
+        <DialogFooter>
+          <Button type="submit" onClick={() => document.querySelector('dialog')?.close()}>Upload</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
   interface LensCardProps {
     lens: Lens;
     index: number;
@@ -699,7 +558,7 @@ type Lens = {
           <span className="flex items-center">
             <ImageUploadDialog 
               lens={lens} 
-              onUpload={handleImageUpload} 
+              onUpload={(file) => handleImageUpload(lens.id, file)} 
             />
             {editingId === lens.id ? (
             <Input
@@ -768,6 +627,7 @@ type Lens = {
                       <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="Flow A">Flow A</SelectItem>
                       <SelectItem value="Flow B">Flow B</SelectItem>
                       <SelectItem value="Flow C">Flow C</SelectItem>
                     </SelectContent>
@@ -818,7 +678,6 @@ type Lens = {
                       <SelectItem  value="flux-pro">flux-pro</SelectItem>
                       <SelectItem  value="flux-realism">flux-realism</SelectItem>
                       <SelectItem  value="face-Gen">face-Gen</SelectItem>
-                      <SelectItem  value="replicate-flux-schnell">replicate-flux-schnell</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1050,9 +909,9 @@ type Lens = {
                             <div className="flex items-center w-[65px]">
                               
                               <ImageUploadDialog 
-                                  lens={lens} 
-                                  onUpload={handleImageUpload} 
-                                />
+                                lens={lens} 
+                                onUpload={(file) => handleImageUpload(lens.id, file)} 
+                              />
                             </div>
                           </TableCell>
                           <TableCell>
@@ -1109,7 +968,7 @@ type Lens = {
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-        
+                                <SelectItem value="Flow A">Flow A</SelectItem>
                                 <SelectItem value="Flow B">Flow B</SelectItem>
                                 <SelectItem value="Flow C">Flow C</SelectItem>
                               </SelectContent>
@@ -1167,7 +1026,6 @@ type Lens = {
                                 <SelectItem  value="flux-pro">flux-pro</SelectItem>
                                 <SelectItem  value="flux-realism">flux-realism</SelectItem>
                                 <SelectItem  value="face-Gen">face-Gen</SelectItem>
-                                <SelectItem  value="replicate-flux-schnell">replicate-flux-schnell</SelectItem>
                               </SelectContent>
                             </Select>
                           </TableCell>
