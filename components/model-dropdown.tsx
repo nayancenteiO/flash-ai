@@ -462,7 +462,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
       </DropdownMenu>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] w-full">
+        <DialogContent className="login-popup sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] w-full">
           <DialogHeader>
             <DialogTitle>{currentModal}</DialogTitle>
           </DialogHeader>
@@ -500,7 +500,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Update</Button>
+            <Button className='mb-01' onClick={handleSave}>Update</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

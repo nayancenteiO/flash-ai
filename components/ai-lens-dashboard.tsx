@@ -23,6 +23,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Header } from './header'
 import { ModelDropdown } from './model-dropdown'
 import { log } from 'console'
+import { LensNameDialog } from './LensNameDialog'
 
 // Utility function for decryption
 async function decryptField(encryptedData: string): Promise<string> {
@@ -81,7 +82,7 @@ type Lens = {
   usageCount: number;
 }; 
 
-  export function AiLensDashboard() {
+export function AiLensDashboard() {
     const [lenses, setLenses] = useState<Lens[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [systemPrompt, setSystemPrompt] = useState("");
@@ -190,7 +191,7 @@ type Lens = {
     };
   
     const handleNameSave = async (id: number, newName: string) => {
-      setIsLoading(true);
+    
       const formData = new FormData();
       formData.append('lensName', newName);
       try {
@@ -210,8 +211,6 @@ type Lens = {
           lens.id === id ? { ...lens, name: newName } : lens
         ));
   
-        setEditingId(null);
-  
         toast({
           title: "Success",
           description: "Lens name updated successfully",
@@ -223,9 +222,7 @@ type Lens = {
           description: "Failed to update lens name. Please try again.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     };
 
     useEffect(() => {
@@ -359,21 +356,287 @@ type Lens = {
       }
     };
 
+    // const handleDisplayToggle = useCallback(async (id: number) => {
+    //   try {
+    //     const lens = lenses.find(l => l.id === id);
+    //     if (!lens) {
+    //       console.error('Lens not found');
+    //       return;
+    //     }
+    
+    //     const newDisplayValue = !lens.display;
+    //     console.log(newDisplayValue);
+        
+    //     const response = await fetch('https://dashboard.flashailens.com/api/dashboard/updateDisplayValue', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         lensId: lens.lensId,
+    //         isDisplayed: newDisplayValue,
+    //         display: true
+    //       }),
+    //     });
+    
+    //     if (!response.ok) {
+    //       throw new Error('Failed to update display value');
+    //     }
+    //     toast({
+    //       title: "Success",
+    //       description: "Display value updated successfully",
+    //     });
+    //   } catch (error) {
+    //     console.error('Error updating display value:', error);
+    //     toast({
+    //       title: "Error",
+    //       description: "Failed to update display value. Please try again.",
+    //       variant: "destructive",
+    //     });
+    //   }
+    // }, [lenses, toast]);
+  
+    // const handleDisplayToggles = useCallback(async (id: number) => {
+    //   try {
+    //     const lens = lenses.find(l => l.id === id);
+    //     if (!lens) {
+    //       console.error('Lens not found');
+    //       return;
+    //     }
+    
+    //     const newPremiumValue = !lens.premiumLens;
+    //     console.log(newPremiumValue);
+    //     const response = await fetch('https://dashboard.flashailens.com/api/dashboard/updateDisplayValue', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         lensId: lens.lensId,
+    //         isDisplayed: newPremiumValue,
+    //         display: false
+    //       }),
+    //     });
+    
+    //     if (!response.ok) {
+    //       throw new Error('Failed to update premium lens value');
+    //     }
+    
+    //     // Update local state if API call was successful
+    //     setLenses(prevLenses => prevLenses.map(l => 
+    //       l.id === id ? { ...l, premiumLens: newPremiumValue } : l
+    //     ));
+    
+    //     toast({
+    //       title: "Success",
+    //       description: "Premium lens value updated successfully",
+    //     });
+    //   } catch (error) {
+    //     console.error('Error updating premium lens value:', error);
+    //     toast({
+    //       title: "Error",
+    //       description: "Failed to update premium lens value. Please try again.",
+    //       variant: "destructive",
+    //     });
+    //   }
+    // }, [lenses, toast]);
+
     const handleDisplayToggle = useCallback((id: number) => {
       setLenses(prevLenses => prevLenses.map(lens => 
         lens.id === id ? { ...lens, display: !lens.display } : lens
-      ))
-    }, [])
-  
+      ));
+    
+      // Send API request in the background
+      const lens = lenses.find(l => l.id === id);
+      if (lens) {
+        fetch('https://dashboard.flashailens.com/api/dashboard/updateDisplayValue', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            lensId: lens.lensId,
+            isDisplayed: !lens.display,
+            display: true
+          }),
+        }).then(response => {
+          if (!response.ok) {
+            console.error('Failed to update display value');
+            // Optionally, revert the change if the API call fails
+          }
+        }).catch(error => {
+          console.error('Error updating display value:', error);
+          // Optionally, revert the change if the API call fails
+        });
+      }
+    }, [lenses]);
+    
     const handleDisplayToggles = useCallback((id: number) => {
       setLenses(prevLenses => prevLenses.map(lens => 
         lens.id === id ? { ...lens, premiumLens: !lens.premiumLens } : lens
-      ))
-    }, [])
-
-    const handleLensInputChange = (id: number, field: keyof Lens, value: string | number) => {
+      ));
+    
+      // Send API request in the background
+      const lens = lenses.find(l => l.id === id);
+      if (lens) {
+        fetch('https://dashboard.flashailens.com/api/dashboard/updateDisplayValue', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            lensId: lens.lensId,
+            isDisplayed: !lens.premiumLens,
+            display: false
+          }),
+        }).then(response => {
+          if (!response.ok) {
+            console.error('Failed to update premium lens value');
+            // Optionally, revert the change if the API call fails
+          }
+        }).catch(error => {
+          console.error('Error updating premium lens value:', error);
+          // Optionally, revert the change if the API call fails
+        });
+      }
+    }, [lenses]);
+    
+    const handleLensInputChange = async (id: number, field: keyof Lens, value: string | number) => {
       if (field === 'promptgenerationflow') {
         handlePromptGenerationFlowChange(id, value as string);
+      } else if (field === 'creditconsumption') {
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { 
+            ...lens, 
+            [field]: typeof value === 'string' ? Number(value) : value 
+          } : lens
+        ));
+        
+        try {
+          await updateCreditConsumption(id, value as number);
+        } catch (error) {
+          console.error('Error updating credit consumption:', error);
+          setLenses(prevLenses => prevLenses.map(lens => 
+            lens.id === id ? { ...lens, creditconsumption: lens.creditconsumption } : lens
+          ));
+          toast({
+            title: "Error",
+            description: "Failed to update credit consumption. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else if (field === 'imageToTextModel') {
+        setLenses(lenses.map(lens => 
+          lens.id === id ? { ...lens, [field]: typeof value === 'number' ? String(value) : value } : lens
+        ));
+        try {
+          await updateImageToTextModel(id, value as string);
+          
+        } catch (error) {
+          console.error('Error updating Image to Text Model:', error);
+          toast({
+            title: "Error",
+            description: "Failed to update Image to Text Model. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else if (field === 'maxTokens') {
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { 
+            ...lens, 
+            [field]: typeof value === 'string' ? Number(value) : value 
+          } : lens
+        ));
+        
+        try {
+          await updatemaxTokens(id, value as number);
+        } catch (error) {
+          console.error('Error updating maxTokens:', error);
+          setLenses(prevLenses => prevLenses.map(lens => 
+            lens.id === id ? { ...lens, maxTokens: lens.maxTokens } : lens
+          ));
+          toast({
+            title: "Error",
+            description: "Failed to update maxTokens. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else if (field === 'textToImageModel') {
+        setLenses(lenses.map(lens => 
+          lens.id === id ? { ...lens, [field]: typeof value === 'number' ? String(value) : value } : lens
+        ));
+        try {
+          await updatetextToImageModel(id, value as string);
+          
+        } catch (error) {
+          console.error('Error updating text To Image Model:', error);
+          toast({
+            title: "Error",
+            description: "Failed to update text To Image Model. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else if (field === 'prompt' || field === 'stylePrompt' || field === 'negativePrompt') {
+        try {
+          await updatePrompt(id, field, value as string);
+          setLenses(lenses.map(lens => 
+            lens.id === id ? { ...lens, [field]: value } : lens
+          ));
+        } catch (error) {
+          console.error(`Error updating ${field}:`, error);
+          throw error;
+        }
+      } else if (field === 'steps') {
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, steps: typeof value === 'string' ? parseInt(value) : value } : lens
+        ));
+        try {
+          await updateSteps(id, value as number);
+        } catch (error) {
+          console.error('Error updating steps:', error);
+          setLenses(prevLenses => prevLenses.map(lens => 
+            lens.id === id ? { ...lens, steps: lens.steps } : lens
+          ));
+          toast({
+            title: "Error",
+            description: "Failed to update steps. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else if (field === 'cfgScale') {
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, cfgScale: typeof value === 'string' ? parseFloat(value) : value } : lens
+        ));
+        try {
+          await updateCfgScale(id, value as number);
+        } catch (error) {
+          console.error('Error updating CFG Scale:', error);
+          setLenses(prevLenses => prevLenses.map(lens => 
+            lens.id === id ? { ...lens, cfgScale: lens.cfgScale } : lens
+          ));
+          toast({
+            title: "Error",
+            description: "Failed to update CFG Scale. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else if (field === 'Aproxtime') {
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, Aproxtime: value as string } : lens
+        ));
+        try {
+          await updateAproxTime(id, value as string);
+        } catch (error) {
+          console.error('Error updating Aprox Time:', error);
+          setLenses(prevLenses => prevLenses.map(lens => 
+            lens.id === id ? { ...lens, Aproxtime: lens.Aproxtime } : lens
+          ));
+          toast({
+            title: "Error",
+            description: "Failed to update Aprox Time. Please try again.",
+            variant: "destructive",
+          });
+        }
       } else {
         setLenses(lenses.map(lens => 
           lens.id === id ? { ...lens, [field]: value } : lens
@@ -425,6 +688,280 @@ type Lens = {
       }
     };
   
+    const updateCreditConsumption = async (id: number, newValue: number) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('lensCredit', newValue.toString());
+  
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update credit consumption');
+        }
+  
+        const result = await response.json();
+  
+        toast({
+          title: "Success",
+          description: "Credit consumption updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating credit consumption:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update credit consumption. Please try again.",
+          variant: "destructive",
+        });
+  
+        // Revert the local state change if the API call fails
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, creditconsumption: lens.creditconsumption } : lens
+        ));
+      }
+    };
+
+    const updateImageToTextModel = async (id: number, newValue: string) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append('model', newValue);
+    
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update Image to Text Model');
+        }
+    
+        const result = await response.json();
+    
+        toast({
+          title: "Success",
+          description: "Image to Text Model updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating Image to Text Model:', error);
+        throw error;
+      }
+    };
+
+    const updatemaxTokens = async (id: number, newValue: number) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('maxTokens', newValue.toString());
+  
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update maxTokens!');
+        }
+  
+        const result = await response.json();
+  
+        toast({
+          title: "Success",
+          description: "maxTokens updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating maxTokens:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update maxTokens. Please try again.",
+          variant: "destructive",
+        });
+  
+        // Revert the local state change if the API call fails
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, maxTokens: lens.maxTokens } : lens
+        ));
+      }
+    };
+
+    const updatetextToImageModel = async (id: number, newValue: string) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append('imageModel', newValue);
+    
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update text To Image Model');
+        }
+    
+        const result = await response.json();
+    
+        toast({
+          title: "Success",
+          description: "Text To Image Model updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating Text To Image Model:', error);
+        throw error;
+      }
+    };
+
+    const updatePrompt = async (id: number, field: 'prompt' | 'stylePrompt' | 'negativePrompt', newValue: string) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append(field, newValue);
+    
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Failed to update ${field}`);
+        }
+    
+        const result = await response.json();
+    
+        toast({
+          title: "Success",
+          description: `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully`,
+        });
+      } catch (error) {
+        console.error(`Error updating ${field}:`, error);
+        throw error;
+      }
+    };
+
+    const updateSteps = async (id: number, newValue: number) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append('civitaiSteps', newValue.toString());
+    
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update steps');
+        }
+    
+        const result = await response.json();
+    
+        toast({
+          title: "Success",
+          description: "Steps updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating steps:', error);
+        throw error;
+      }
+    };
+    
+    const updateCfgScale = async (id: number, newValue: number) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append('civitaiCFGScale', newValue.toString());
+    
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update CFG Scale');
+        }
+    
+        const result = await response.json();
+    
+        toast({
+          title: "Success",
+          description: "CFG Scale updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating CFG Scale:', error);
+        throw error;
+      }
+    };
+    
+    const updateAproxTime = async (id: number, newValue: string) => {
+      const lens = lenses.find(l => l.id === id);
+      if (!lens) {
+        console.error('Lens not found');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append('approxTime', newValue);
+    
+      try {
+        const response = await fetch(`https://dashboard.flashailens.com/api/dashboard/updateData/${id}`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to update Aprox Time');
+        }
+    
+        const result = await response.json();
+    
+        toast({
+          title: "Success",
+          description: "Aprox Time updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating Aprox Time:', error);
+        throw error;
+      }
+    };
+    
     const handleCopyLens = (id: number) => {
       const lensToCopy = lenses.find(lens => lens.id === id)
       if (lensToCopy) {
@@ -528,11 +1065,13 @@ type Lens = {
       value: string;
       onChange: (value: string) => void;
       title: string;
+      id: number;
     }
 
-    const PromptPopover: React.FC<PromptPopoverProps> = ({ value, onChange, title }) => {
+    const PromptPopover: React.FC<PromptPopoverProps> = ({ value, onChange, title, id }) => {
       const [isOpen, setIsOpen] = useState(false);
       const [tempValue, setTempValue] = useState(value);
+      const [isLoading, setIsLoading] = useState(false);
     
       const handleOpen = () => {
         setTempValue(value);
@@ -543,18 +1082,30 @@ type Lens = {
         setIsOpen(false);
       };
     
-      const handleSave = () => {
-        onChange(tempValue);
-        handleClose();
+      const handleSave = async () => {
+        setIsLoading(true);
+        try {
+          await onChange(tempValue);
+          handleClose();
+        } catch (error) {
+          console.error('Error updating prompt:', error);
+          toast({
+            title: "Error",
+            description: "Failed to update prompt. Please try again.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoading(false);
+        }
       };
     
       return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
             <Textarea
-              className="max-width w-[250px] truncate resize-none latest-bio cursor-pointer" // Set fixed width and height for the textarea
-              onClick={handleOpen} // Open popover on click
-              readOnly // Make the textarea read-only so it acts as a trigger
+              className="max-width w-[250px] truncate resize-none latest-bio cursor-pointer"
+              onClick={handleOpen}
+              readOnly
               value={value || "Edit prompt"}
             />
           </PopoverTrigger>
@@ -564,20 +1115,24 @@ type Lens = {
               <Textarea
                 value={tempValue}
                 onChange={(e) => setTempValue(e.target.value)}
-                className="w-12/12 latestes resize-none" // Keep the content fixed
+                className="w-12/12 latestes resize-none"
               />
               <div className="flex justify-end space-x-2">
                 <Button variant="outline" onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleSave}>Save</Button>
+                <Button onClick={handleSave} disabled={isLoading}>
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Save"}
+                </Button>
               </div>
             </div>
           </PopoverContent>
         </Popover>
       );
     };
+
   interface DeleteConfirmationProps {
     onConfirm: () => void;
   }
+
   const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({ onConfirm }) => (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -599,10 +1154,12 @@ type Lens = {
       </AlertDialogContent>
     </AlertDialog>
   )
+
   interface ImageUploadDialogProps {
     lens: Lens;
     onUpload: (id: number, file: File) => Promise<void>;
   }
+
   const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({ lens, onUpload }) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -670,7 +1227,8 @@ type Lens = {
         </DialogContent>
       </Dialog>
     );
-  };
+  }
+
   interface LensCardProps {
     lens: Lens;
     index: number;
@@ -684,6 +1242,7 @@ type Lens = {
     handleNameSave: (id: number, newName: string) => void;
     editingId: number | null;
   }
+
   const LensCard: React.FC<LensCardProps> = ({ 
     lens, 
     index, 
@@ -692,7 +1251,8 @@ type Lens = {
     handleLensInputChange, 
     handleCopyLens, 
     handleMoveLens,
-    handleDeleteLens
+    handleDeleteLens,
+    handleNameSave
   }) => (
     <Card className="mb-4 test">
       <CardHeader className="pb-2">
@@ -702,27 +1262,10 @@ type Lens = {
               lens={lens} 
               onUpload={handleImageUpload} 
             />
-            {editingId === lens.id ? (
-            <Input
-              ref={inputRef}
-              value={lens.name}
-              onChange={(e) => handleLensInputChange(lens.id, 'name', e.target.value)}
-              onBlur={() => handleNameSave(lens.id, lens.name)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleNameSave(lens.id, lens.name);
-                }
-              }}
-              className="ml-2 w-full"
-            />
-          ) : (
-            <span
-              className="ml-2 font-medium cursor-pointer"
-              onClick={() => handleNameEdit(lens.id)}
-            >
-              {lens.name}
-            </span>
-          )}
+              <LensNameDialog
+                lensName={lens.name}
+                onSave={async (newName) => await handleNameSave(lens.id, newName)}
+              />
           </span>
           <div>
             <Switch className="mr-2"
@@ -844,6 +1387,7 @@ type Lens = {
                     value={lens.prompt}
                     onChange={(value) => handleLensInputChange(lens.id, 'prompt', value)}
                     title="Edit Prompt"
+                    id={lens.id}
                   />
                 </div>
                 <div>
@@ -852,6 +1396,7 @@ type Lens = {
                     value={lens.stylePrompt}
                     onChange={(value) => handleLensInputChange(lens.id, 'stylePrompt', value)}
                     title="Edit Style Prompt"
+                    id={lens.id}
                   />
                 </div>
                 <div>
@@ -860,6 +1405,7 @@ type Lens = {
                     value={lens.negativePrompt}
                     onChange={(value) => handleLensInputChange(lens.id, 'negativePrompt', value)}
                     title="Edit Negative Prompt"
+                    id={lens.id}
                   />
                 </div>
               </div>
@@ -1058,27 +1604,10 @@ type Lens = {
                           </TableCell>
                           <TableCell>
                             <div className="text-center  w-[150px] wi-conent">
-                              {editingId === lens.id ? (
-                                <Input
-                                  ref={inputRef}
-                                  value={lens.name}
-                                  onChange={(e) => handleLensInputChange(lens.id, 'name', e.target.value)}
-                                  onBlur={() => handleNameSave(lens.id, lens.name)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      handleNameSave(lens.id, lens.name);
-                                    }
-                                  }}
-                                  className="w-full"
-                                />
-                              ) : (
-                                <span
-                                  className="text-center font-medium cursor-pointer"
-                                  onClick={() => handleNameEdit(lens.id)}
-                                >
-                                  {lens.name}
-                                </span>
-                              )}
+                            <LensNameDialog
+                                lensName={lens.name}
+                                onSave={(newName) => handleNameSave(lens.id, newName)}
+                              />
                             </div>
                           </TableCell>
                           <TableCell>
@@ -1177,6 +1706,7 @@ type Lens = {
                               value={lens.prompt}
                               onChange={(value) => handleLensInputChange(lens.id, 'prompt', value)}
                               title="Edit Prompt"
+                              id={lens.id}
                             />
                           </TableCell>
                           <TableCell>
@@ -1184,6 +1714,7 @@ type Lens = {
                               value={lens.stylePrompt}
                               onChange={(value) => handleLensInputChange(lens.id, 'stylePrompt', value)}
                               title="Edit Style Prompt"
+                              id={lens.id}
                             />
                           </TableCell>
                           <TableCell>
@@ -1191,6 +1722,7 @@ type Lens = {
                               value={lens.negativePrompt}
                               onChange={(value) => handleLensInputChange(lens.id, 'negativePrompt', value)}
                               title="Edit Negative Prompt"
+                              id={lens.id}
                             />
                           </TableCell>
                           <TableCell>
@@ -1281,4 +1813,4 @@ type Lens = {
         )}
       </div>
     )
-  }
+}
