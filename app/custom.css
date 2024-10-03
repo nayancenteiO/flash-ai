@@ -43,6 +43,15 @@ textarea.max-width {
 div[role="dialog"] {
     outline: none !important;
 }
+span.d-block {
+    display: block;
+}
+.mobile-100 {
+    border-width: 1px;
+    border-color: hsl(var(--input));
+    padding: 7px 12px;
+    text-align: left !important;
+}
 /* media */
 @media(max-width:767px){
     .custom-flex {
@@ -96,6 +105,9 @@ div[role="dialog"] {
     }
     .border-0ra{
         border-radius: 8px;
+    }
+    .mobile-100 {
+        width: 100% !important;
     }
 }
 @media(max-width:480px){

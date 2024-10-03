@@ -24,6 +24,7 @@ import { Header } from './header'
 import { ModelDropdown } from './model-dropdown'
 import { log } from 'console'
 import { LensNameDialog } from './LensNameDialog'
+import { NumberFieldDialog } from './NumberFieldDialog'
 
 // Utility function for decryption
 async function decryptField(encryptedData: string): Promise<string> {
@@ -302,7 +303,7 @@ export function AiLensDashboard() {
     ? 1 
     : Math.ceil(filteredLenses.length / parseInt(entriesPerPage))
 
-  const displayedLenses = entriesPerPage === "All" 
+    const displayedLenses = entriesPerPage === "All" 
     ? filteredLenses 
     : filteredLenses.slice(
         (currentPage - 1) * parseInt(entriesPerPage), 
@@ -1061,6 +1062,85 @@ export function AiLensDashboard() {
       }
     };
 
+    const handleCreditConsumptionSave = async (id: number, newValue: number) => {
+      try {
+        await updateCreditConsumption(id, newValue);
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, creditconsumption: newValue } : lens
+        ));
+        toast({
+          title: "Success",
+          description: "Credit consumption updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating credit consumption:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update credit consumption. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+    const handleMaxTokensSave = async (id: number, newValue: number) => {
+      try {
+        await updatemaxTokens(id, newValue);
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, maxTokens: newValue } : lens
+        ));
+        toast({
+          title: "Success",
+          description: "Max tokens updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating max tokens:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update max tokens. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+  
+    const handleStepsSave = async (id: number, newValue: number) => {
+      try {
+        await updateSteps(id, newValue);
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, steps: newValue } : lens
+        ));
+        toast({
+          title: "Success",
+          description: "Steps updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating steps:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update steps. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+  
+    const handleCfgScaleSave = async (id: number, newValue: number) => {
+      try {
+        await updateCfgScale(id, newValue);
+        setLenses(prevLenses => prevLenses.map(lens => 
+          lens.id === id ? { ...lens, cfgScale: newValue } : lens
+        ));
+        toast({
+          title: "Success",
+          description: "CFG Scale updated successfully",
+        });
+      } catch (error) {
+        console.error('Error updating CFG Scale:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update CFG Scale. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
     interface PromptPopoverProps {
       value: string;
       onChange: (value: string) => void;
@@ -1240,6 +1320,8 @@ export function AiLensDashboard() {
     handleDeleteLens: (id: number) => void;
     handleNameEdit: (id: number) => void;
     handleNameSave: (id: number, newName: string) => void;
+    handleMaxTokensSave: () => void
+    handleCreditConsumptionSave: () => void;
     editingId: number | null;
   }
 
@@ -1252,7 +1334,9 @@ export function AiLensDashboard() {
     handleCopyLens, 
     handleMoveLens,
     handleDeleteLens,
-    handleNameSave
+    handleNameSave,
+    handleCreditConsumptionSave,
+    handleMaxTokensSave
   }) => (
     <Card className="mb-4 test">
       <CardHeader className="pb-2">
@@ -1296,11 +1380,12 @@ export function AiLensDashboard() {
               <div className="grid gap-4">
                 <div>
                   <Label className="text-sm font-medium">Credit Consumption</Label>
-                  <Input 
-                    type="number" 
-                    value={lens.creditconsumption} 
-                    onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
-                  />
+                    <NumberFieldDialog
+                      fieldName="Credit Consumption"
+                      value={lens.creditconsumption}
+                      onSave={async (newValue) => await handleCreditConsumptionSave(newValue)} // Changed to async
+                      min={0}
+                    />
                 </div>
                 <div>
                   <Label className="text-sm font-medium">  Prompt Generation Flow</Label>
@@ -1368,11 +1453,12 @@ export function AiLensDashboard() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Max Tokens</Label>
-                  <Input 
-                    type="number" 
-                    value={lens.maxTokens} 
-                    onChange={(e) => handleLensInputChange(lens.id, 'maxTokens', parseInt(e.target.value))}
-                  />
+                    <NumberFieldDialog
+                      fieldName="Max Tokens"
+                      value={lens.maxTokens}
+                      onSave={(newValue) => handleMaxTokensSave(lens.id, newValue)}
+                      min={1}
+                    />
                 </div>
               </div>
             </AccordionContent>
@@ -1559,6 +1645,7 @@ export function AiLensDashboard() {
                     handleDeleteLens={handleDeleteLens}
                     handleNameEdit={handleNameEdit}
                     handleNameSave={handleNameSave}
+                    
                     editingId={editingId}
                   />
                 ))}
@@ -1623,12 +1710,12 @@ export function AiLensDashboard() {
                             />
                           </TableCell>
                           <TableCell>
-                            <Input 
-                            type="number" 
-                            value={lens.creditconsumption} 
-                            onChange={(e) => handleLensInputChange(lens.id, 'creditconsumption', parseInt(e.target.value))}
-                              className="w-[150px]"
-                            />
+                            <NumberFieldDialog
+                                fieldName="Credit Consumption"
+                                value={lens.creditconsumption}
+                                onSave={(newValue) => handleCreditConsumptionSave(lens.id, newValue)}
+                                min={0}
+                              />
                           </TableCell>
                           <TableCell>
                           <Select 
@@ -1666,11 +1753,11 @@ export function AiLensDashboard() {
                           </TableCell>
                           
                           <TableCell>
-                            <Input 
-                              type="number" 
-                              value={lens.maxTokens} 
-                              onChange={(e) => handleLensInputChange(lens.id, 'maxTokens', parseInt(e.target.value))}
-                              className="w-[100px]"
+                            <NumberFieldDialog
+                                fieldName="Max Tokens"
+                                value={lens.maxTokens}
+                                onSave={(newValue) => handleMaxTokensSave(lens.id, newValue)}
+                                min={1}
                             />
                           </TableCell>
                           <TableCell>
@@ -1726,19 +1813,23 @@ export function AiLensDashboard() {
                             />
                           </TableCell>
                           <TableCell>
-                            <Input 
-                              type="number" 
-                              value={lens.steps} 
-                              onChange={(e) => handleLensInputChange(lens.id, 'steps', parseInt(e.target.value))}
-                              className="w-[80px]"
+                            <NumberFieldDialog
+                              fieldName="Steps"
+                              value={lens.steps}
+                              onSave={(newValue) => handleStepsSave(lens.id, newValue)}
+                              min={1}
+                              max={100}
+                              step={1}
                             />
                           </TableCell>
                           <TableCell>
-                            <Input 
-                              type="number" 
-                              value={lens.cfgScale} 
-                              onChange={(e) => handleLensInputChange(lens.id, 'cfgScale', parseFloat(e.target.value))}
-                              className="w-[80px]"
+                            <NumberFieldDialog
+                              fieldName="CFG Scale"
+                              value={lens.cfgScale}
+                              onSave={(newValue) => handleCfgScaleSave(lens.id, newValue)}
+                              min={1}
+                              max={20}
+                              step={0.1}
                             />
                           </TableCell>
                           <TableCell>

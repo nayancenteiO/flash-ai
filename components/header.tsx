@@ -40,7 +40,7 @@ export function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail,
     <div className="flex justify-between items-center fixed_position mnobile-flex-dev">
       <h1 className="text-2xl font-bold flex items-center mobiel-font">
         <Camera className="h-6 w-6 mr-2" />
-        AI Lens Dashboard
+        AI Lens Dashboard <small> (Staging)</small>
       </h1>
       {isLoggedIn ? (
         <div className="flex items-center space-x-2 mobile-flex">
