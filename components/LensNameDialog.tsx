@@ -38,7 +38,11 @@ export const LensNameDialog: React.FC<LensNameDialogProps> = ({ lensName, onSave
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <span className="cursor-pointer ml-mo" onClick={handleOpen}>{lensName}</span>
+      {lensName ? (
+          <span className="cursor-pointer ml-mo" onClick={handleOpen}>{lensName}</span>
+        ) : (
+          <span className="cursor-pointer ml-mo text-gray-400" onClick={handleOpen}>Enter Lens Name</span>
+        )}
       </DialogTrigger>
       <DialogContent className='login-popup'>
         <DialogHeader>
