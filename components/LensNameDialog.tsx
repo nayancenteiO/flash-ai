@@ -24,18 +24,21 @@ export const LensNameDialog: React.FC<LensNameDialogProps> = ({ lensName, onSave
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
     try {
       await onSave(tempName);
       handleClose();
     } catch (error) {
       console.error('Error updating lens name:', error);
-    } 
+    }  finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <span className="cursor-pointer ml-2" onClick={handleOpen}>{lensName}</span>
+        <span className="cursor-pointer ml-mo" onClick={handleOpen}>{lensName}</span>
       </DialogTrigger>
       <DialogContent className='login-popup'>
         <DialogHeader>

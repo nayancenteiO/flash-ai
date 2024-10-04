@@ -109,6 +109,9 @@ span.d-block {
     .mobile-100 {
         width: 100% !important;
     }
+    .ml-mo{
+        margin-left: 10px;
+    }
 }
 @media(max-width:480px){
     .custom-flex {

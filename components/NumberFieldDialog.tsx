@@ -42,9 +42,9 @@ export const NumberFieldDialog: React.FC<NumberFieldDialogProps> = ({ fieldName,
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <span className="w-[80px] mobile-100 rounded-md cursor-pointer d-block" onClick={handleOpen}>{value}</span>
+        <span className="cursor-pointer" onClick={handleOpen}>{value}</span>
       </DialogTrigger>
-      <DialogContent className='login-popup'>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit {fieldName}</DialogTitle>
         </DialogHeader>
@@ -60,7 +60,7 @@ export const NumberFieldDialog: React.FC<NumberFieldDialogProps> = ({ fieldName,
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>Cancel</Button>
-          <Button className='mb-01' onClick={handleSave} disabled={isLoading}>
+          <Button onClick={handleSave} disabled={isLoading}>
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Save"}
           </Button>
         </DialogFooter>
