@@ -4,22 +4,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from 'lucide-react'
 
-interface NumberFieldDialogProps {
-  fieldName: string;
-  value: number;
-  onSave: (newValue: number) => Promise<void>;
-  min?: number;
-  max?: number;
-  step?: number;
+interface AproxTimeDialogProps {
+  aproxTime: string;
+  onSave: (newValue: string) => Promise<void>;
 }
 
-export const NumberFieldDialog: React.FC<NumberFieldDialogProps> = ({ fieldName, value, onSave, min, max, step }) => {
+export const AproxTimeDialog: React.FC<AproxTimeDialogProps> = ({ aproxTime, onSave }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [tempValue, setTempValue] = useState(value);
+  const [tempValue, setTempValue] = useState(aproxTime);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOpen = () => {
-    setTempValue(value);
+    setTempValue(aproxTime);
     setIsOpen(true);
   };
 
@@ -33,7 +29,7 @@ export const NumberFieldDialog: React.FC<NumberFieldDialogProps> = ({ fieldName,
       await onSave(tempValue);
       handleClose();
     } catch (error) {
-      console.error(`Error updating ${fieldName}:`, error);
+      console.error('Error updating Aprox Time:', error);
     } finally {
       setIsLoading(false);
     }
@@ -42,20 +38,17 @@ export const NumberFieldDialog: React.FC<NumberFieldDialogProps> = ({ fieldName,
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <span className="cursor-pointer mobile-100 d-block rounded-md" onClick={handleOpen}>{value}</span>
+        <span className="cursor-pointer mobile-1000 d-block rounded-md" onClick={handleOpen}>{aproxTime}</span>
       </DialogTrigger>
       <DialogContent className='login-popup'>
         <DialogHeader>
-          <DialogTitle>Edit {fieldName}</DialogTitle>
+          <DialogTitle>Edit Aprox Time</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Input
-            type="number"
             value={tempValue}
-            onChange={(e) => setTempValue(Number(e.target.value))}
-            min={min}
-            max={max}
-            step={step}
+            onChange={(e) => setTempValue(e.target.value)}
+            placeholder="Enter Aprox Time"
           />
         </div>
         <DialogFooter>

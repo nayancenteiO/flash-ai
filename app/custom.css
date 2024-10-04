@@ -52,6 +52,13 @@ span.d-block {
     padding: 7px 12px;
     text-align: left !important;
 }
+.mobile-1000 {
+    padding: 7px 12px;
+    text-align: left !important;
+}
+.d-none {
+    display: none;
+}
 /* media */
 @media(max-width:767px){
     .custom-flex {
@@ -106,8 +113,13 @@ span.d-block {
     .border-0ra{
         border-radius: 8px;
     }
-    .mobile-100 {
+    .mobile-100, .mobile-1000{
         width: 100% !important;
+    }
+    .mobile-1000{
+        width: 100% !important;
+        border-width: 1px;
+        border-color: hsl(var(--input));
     }
     .ml-mo{
         margin-left: 10px;
