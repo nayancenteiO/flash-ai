@@ -297,12 +297,12 @@ export default function NegativeFeedbackAnalysis() {
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button variant="outline" size="sm" className="w-full mt-2">
-                                View Details
+                              Prompt & Feedback Details
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="login-popup sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px]">
                               <DialogHeader>
-                                <DialogTitle>Feedback Details</DialogTitle>
+                                <DialogTitle>Prompt & Feedback Details</DialogTitle>
                               </DialogHeader>
                               <div className="max-h-[63vh] overflow-y-auto">
                                 <div className="space-y-4">
