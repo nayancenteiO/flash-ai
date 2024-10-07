@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Header } from './header'
+import Header from './header'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 
@@ -52,9 +52,28 @@ export default function NegativeFeedbackAnalysis() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isScrolled, setIsScrolled] = useState(false)
   const [feedbackData, setFeedbackData] = useState<FeedbackItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 30) { // Add class if scrolled down more than 50px
+        document.body.classList.add('scrolled');
+        setIsScrolled(true);
+      } else {
+        document.body.classList.remove('scrolled');
+        setIsScrolled(false);
+      }
+    };
 
+    // Add the scroll event listener
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
@@ -147,7 +166,7 @@ export default function NegativeFeedbackAnalysis() {
   const currentFeedback = filteredFeedback.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
  
   return (
-    <div className="container mx-auto p-4 sm:p-6 margin-top">
+    <div className="container mx-auto p-4 sm:p-6 margin-top-10">
       <Header 
         isLoggedIn={isLoggedIn}
         email={email}

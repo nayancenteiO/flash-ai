@@ -20,7 +20,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Header } from './header'
+import Header from './header'
 import { ModelDropdown } from './model-dropdown'
 import { log } from 'console'
 import { LensNameDialog } from './LensNameDialog'
