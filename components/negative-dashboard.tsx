@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Image from "next/image"
-import { Circle, Clock, ChevronLeft, ChevronRight, User, Calendar, Search, Filter } from "lucide-react"
+import { Circle, Clock, ChevronLeft, ChevronRight, User, Calendar as CalendarIcon, Search, Filter } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { Calendar } from "@/components/ui/calendar"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Header } from './header';
 // Mock data for demonstration
@@ -294,22 +294,21 @@ export default function NegativeFeedbackAnalysis() {
                     <SheetDescription>Adjust your view settings here.</SheetDescription>
                   </SheetHeader>
                   <div className="py-4 space-y-4">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start text-left font-normal">
-                          <Calendar className="mr-2 h-4 w-4" />
-                          {selectedDate ? selectedDate.toDateString() : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <CalendarComponent
-                          mode="single"
-                          selected={selectedDate}
-                          onSelect={setSelectedDate}
-                          
-                        />
-                      </PopoverContent>
-                    </Popover>
+                  <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {selectedDate ? selectedDate.toDateString() : "Pick a date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Items per page" />
@@ -324,20 +323,20 @@ export default function NegativeFeedbackAnalysis() {
                 </SheetContent>
               </Sheet>
               <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="hidden sm:flex">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {selectedDate ? selectedDate.toDateString() : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                  />
-                </PopoverContent>
-              </Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="hidden sm:flex">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate ? selectedDate.toDateString() : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                    />
+                  </PopoverContent>
+                </Popover>
               <div className="hidden sm:inline-flex">
                 <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
                     <SelectTrigger>
