@@ -300,11 +300,11 @@ export default function NegativeFeedbackAnalysis() {
                                 View Details
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
+                            <DialogContent className="login-popup sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px]">
                               <DialogHeader>
                                 <DialogTitle>Feedback Details</DialogTitle>
                               </DialogHeader>
-                              <div className="mt-4 h-[300px] w-full rounded-md border p-4">
+                              <div className="max-h-[63vh] overflow-y-auto">
                                 <div className="space-y-4">
                                   <div>
                                     <h4 className="font-semibold">Prompt:</h4>
