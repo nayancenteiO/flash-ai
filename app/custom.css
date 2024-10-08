@@ -91,15 +91,15 @@ span.d-block {
     }
     
     .mnobile-flex-dev {
-        padding: 16px;
-        flex-direction: row;
-        flex-wrap: wrap;
+        padding: 16px 13px 16px 20px;
+        /* flex-direction: row;
+        flex-wrap: wrap; */
     }
 
     .mnobile-flex-dev h1 {
         font-size: 16px;
         flex-basis: 100%;
-        justify-content: center;
+        /* justify-content: center; */
     }
 
     .mobile-flex {

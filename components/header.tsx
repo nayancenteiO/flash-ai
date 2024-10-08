@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { Camera, LayoutDashboard, Menu } from 'lucide-react'
+import { Camera, LayoutDashboard, Menu, User, Image, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 interface HeaderProps {
   isLoggedIn: boolean
@@ -19,91 +20,99 @@ interface HeaderProps {
 }
 
 export default function Header({ isLoggedIn, email, handleLogout, handleLogin, setEmail, setPassword }: HeaderProps) {
-  const [isNegativeDashboard, setIsNegativeDashboard] = useState(false);
+  const [currentPage, setCurrentPage] = useState('main');
   const [isClient, setIsClient] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     if (typeof window !== 'undefined') {
-      setIsNegativeDashboard(window.location.pathname === '/negative-analysis');
+      if (window.location.pathname === '/negative-analysis') {
+        setCurrentPage('negative');
+      } else if (window.location.pathname === '/image-gen-analysis') {
+        setCurrentPage('image-gen');
+      } else {
+        setCurrentPage('main');
+      }
     }
   }, []);
 
-  const openNegativeDashboard = () => {
+  const openPage = (page: string) => {
     if (isClient) {
-      window.open('/negative-analysis', '_blank');
+      window.open(page, '_blank');
     }
   }
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   }
 
   return (
-    <header className="flex justify-between items-center fixed top-0 left-0 right-0 mnobile-flex-dev bg-background z-50 fixed_position-01">
-      <h1 className="text-xl md:text-2xl font-bold flex items-center">
+    <header className="flex justify-between items-center fixed top-0 left-0 right-0 bg-background z-50 p-4 mnobile-flex-dev fixed_position-01">
+      <h1 className="text-xl font-bold flex items-center">
         <Camera className="h-6 w-6 mr-2" />
-        AI Lens Dashboard <small className="md:inline"> (Staging)</small>
+        AI Lens Dashboard <small className="hidden sm:inline"> (Staging)</small>
       </h1>
       
       {isLoggedIn ? (
-        <>
-          {/* Desktop Menu for logged-in users */}
-          <div className="hidden md:flex items-center space-x-2">
-            {!isNegativeDashboard && (
-              <Button variant="outline" onClick={openNegativeDashboard}>
-                <LayoutDashboard className="h-4 w-4 mr-2" />
-                Negative Analysis
+        <div className="flex items-center space-x-2">
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className='border-none box-none' onClick={toggleMenu}>
+                <Menu className="h-6 w-6" />
               </Button>
-            )}
-            {isNegativeDashboard && (
-              <Button variant="outline" onClick={() => (window.location.href = '/')}>
-                Back to Main Dashboard
-              </Button>
-            )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">{email}</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Mobile Menu for logged-in users */}
-          <div className="md:hidden">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className='border-none box-none'>
-                  <Menu className="h-6 w-6" />
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+              </SheetHeader>
+              <div className="py-4 flex flex-col space-y-4">
+                {currentPage !== 'negative' && (
+                  <Button variant="outline" onClick={() => { openPage('/negative-analysis'); toggleMenu(); }}>
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    Negative Analysis
+                  </Button>
+                )}
+                {currentPage !== 'image-gen' && (
+                  <Button variant="outline" onClick={() => { openPage('/image-gen-analysis'); toggleMenu(); }}>
+                    <Image className="h-4 w-4 mr-2" />
+                    Image Gen Analysis
+                  </Button>
+                )}
+                {currentPage !== 'main' && (
+                  <Button variant="outline" onClick={() => { window.location.href = '/'; toggleMenu(); }}>
+                    Back to Main Dashboard
+                  </Button>
+                )}
+                <Button variant="outline" onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                    Logout / {email}
                 </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                </SheetHeader>
-                <div className="py-4 flex flex-col space-y-4">
-                  {!isNegativeDashboard && (
-                    <Button variant="outline" onClick={() => { openNegativeDashboard(); toggleMobileMenu(); }}>
-                      <LayoutDashboard className="h-4 w-4 mr-2" />
-                      Negative Analysis
-                    </Button>
-                  )}
-                  {isNegativeDashboard && (
-                    <Button variant="outline" onClick={() => { window.location.href = '/'; toggleMobileMenu(); }}>
-                      Back to Main Dashboard
-                    </Button>
-                  )}
-                  <Button variant="outline" onClick={handleLogout}>Logout ({email})</Button>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56">
+              <div className="flex flex-col space-y-2">
+                <p className="text-sm font-medium">{email}</p>
+                <Button variant="outline" size="sm" onClick={handleLogout} className="w-full justify-start">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       ) : (
-        // Login button for non-logged-in users (both mobile and desktop)
         <Dialog>
           <DialogTrigger asChild>
             <Button>Login</Button>
