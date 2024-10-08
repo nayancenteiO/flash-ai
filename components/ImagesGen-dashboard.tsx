@@ -119,7 +119,7 @@ export default function Dashboard() {
   }, []);
   
   return (
-    <div className="flex flex-col space-y-4 p-8">
+    <div className="flex flex-col space-y-4 p-8 margin-top-3">
         <Header 
             isLoggedIn={isLoggedIn}
             email={email}
@@ -130,18 +130,18 @@ export default function Dashboard() {
         />  
         {isLoggedIn && ( 
             <>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center custom-head">
                     <h1 className="text-3xl font-bold">iOS App Analytics Dashboard</h1>
-                    <div className="flex space-x-2">
-                    <Button variant="outline">
-                        <CalendarIcon className="mr-2 h-4 w-4" /> Date Range
-                    </Button>
-                    <Button variant="outline">
-                        <FilterIcon className="mr-2 h-4 w-4" /> Filters
-                    </Button>
-                    <Button variant="outline">
-                        <DownloadIcon className="mr-2 h-4 w-4" /> Export
-                    </Button>
+                    <div className="flex space-x-2 mobile-flex-image">
+                        <Button variant="outline">
+                            <CalendarIcon className="mr-2 h-4 w-4" /> Date Range
+                        </Button>
+                        <Button variant="outline">
+                            <FilterIcon className="mr-2 h-4 w-4" /> Filters
+                        </Button>
+                        <Button variant="outline">
+                            <DownloadIcon className="mr-2 h-4 w-4" /> Export
+                        </Button>
                     </div>
                 </div>
 
@@ -164,66 +164,66 @@ export default function Dashboard() {
                     <TabsTrigger value="reports">Reports</TabsTrigger>
                     </TabsList>
                     <TabsContent value="overview" className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                        <Card className="col-span-4">
-                        <CardHeader>
-                            <CardTitle>Daily User Activity</CardTitle>
-                        </CardHeader>
-                        <CardContent className="pl-2">
-                            <ChartContainer
-                            config={{
-                                users: {
-                                label: "Users",
-                                color: "hsl(var(--chart-1))",
-                                },
-                            }}
-                            className="h-[200px]"
-                            >
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={mockData}>
-                                <XAxis dataKey="date" />
-                                <YAxis />
-                                <ChartTooltip content={<ChartTooltipContent />} />
-                                <Line type="monotone" dataKey="users" stroke="var(--color-users)" strokeWidth={2} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                            </ChartContainer>
-                        </CardContent>
-                        </Card>
-                        <Card className="col-span-3">
-                        <CardHeader>
-                            <CardTitle>Users by Country</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ChartContainer
-                            config={{
-                                value: {
-                                label: "Users",
-                                color: "hsl(var(--chart-1))",
-                                },
-                            }}
-                            className="h-[200px]"
-                            >
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                <Pie
-                                    data={countryData}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 latest-chart-mat">
+                        <Card className="col-span-2">
+                            <CardHeader>
+                                <CardTitle>Daily User Activity</CardTitle>
+                            </CardHeader>
+                            <CardContent className="pl-2">
+                                <ChartContainer
+                                config={{
+                                    users: {
+                                    label: "Users",
+                                    color: "hsl(var(--chart-1))",
+                                    },
+                                }}
+                                className="h-[200px]  latest-chart"
                                 >
-                                    {countryData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <ChartTooltip content={<ChartTooltipContent />} />
-                                </PieChart>
-                            </ResponsiveContainer>
-                            </ChartContainer>
-                        </CardContent>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={mockData}>
+                                    <XAxis dataKey="date" />
+                                    <YAxis />
+                                    <ChartTooltip content={<ChartTooltipContent />} />
+                                    <Line type="monotone" dataKey="users" stroke="var(--color-users)" strokeWidth={2} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                                </ChartContainer>
+                            </CardContent>  
+                        </Card>
+                        <Card className="col-span-2">
+                            <CardHeader>
+                                <CardTitle>Users by Country</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <ChartContainer
+                                config={{
+                                    value: {
+                                    label: "Users",
+                                    color: "hsl(var(--chart-1))",
+                                    },
+                                }}
+                                className="h-[200px] latest-chart"
+                                >
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                    <Pie
+                                        data={countryData}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        outerRadius={80}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {countryData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <ChartTooltip content={<ChartTooltipContent />} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                </ChartContainer>
+                            </CardContent>
                         </Card>
                     </div>
                     </TabsContent>
@@ -235,7 +235,7 @@ export default function Dashboard() {
                     <CardDescription>A comprehensive view of user interactions with the app.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                    <div className="flex justify-between mb-4">
+                    <div className="flex justify-between mb-4 mobile-flex-dowen">
                         <div className="flex space-x-2">
                         <Input className="w-[300px]" placeholder="Search by User ID, Country, City..." />
                         </div>
