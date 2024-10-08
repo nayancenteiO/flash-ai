@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Line, LineChart, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis } from 'recharts'
-import { CalendarIcon, DownloadIcon, FilterIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, DownloadIcon, FilterIcon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -18,6 +18,18 @@ import {
 } from "@/components/ui/table"
 import Header from './header'
 import { toast } from "@/components/ui/use-toast"
+
+import * as React from "react"
+import { addDays, format } from "date-fns"
+import { DateRange } from "react-day-picker"
+ 
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 // Mock data for demonstration
 const mockData = [
@@ -39,6 +51,11 @@ const countryData = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
 export default function Dashboard() {
+
+    const [date, setDate] = React.useState<DateRange | undefined>({
+        from: new Date(2022, 0, 20),
+        to: addDays(new Date(2022, 0, 20), 20),
+      })
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const totalPages = Math.ceil(10000 / itemsPerPage)
@@ -46,6 +63,7 @@ export default function Dashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
   const handleLogout = () => {
     setIsLoggedIn(false)
     setEmail("")
@@ -98,6 +116,7 @@ export default function Dashboard() {
       window.removeEventListener('storage', checkLoginStatus)
     }
   }, [])
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 30) { // Add class if scrolled down more than 50px
@@ -133,9 +152,42 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center custom-head">
                     <h1 className="text-3xl font-bold">iOS App Analytics Dashboard</h1>
                     <div className="flex space-x-2 mobile-flex-image">
-                        <Button variant="outline">
-                            <CalendarIcon className="mr-2 h-4 w-4" /> Date Range
-                        </Button>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <Button
+                                id="date"
+                                variant={"outline"}
+                                className={cn(
+                                " justify-start text-left font-normal",
+                                !date && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date?.from ? (
+                                date.to ? (
+                                    <>
+                                    {format(date.from, "LLL dd, y")} -{" "}
+                                    {format(date.to, "LLL dd, y")}
+                                    </>
+                                ) : (
+                                    format(date.from, "LLL dd, y")
+                                )
+                                ) : (
+                                <span>Pick a date</span>
+                                )}
+                            </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={date?.from}
+                                selected={date}
+                                onSelect={setDate}
+                                numberOfMonths={2}
+                            />
+                            </PopoverContent>
+                        </Popover>
                         <Button variant="outline">
                             <FilterIcon className="mr-2 h-4 w-4" /> Filters
                         </Button>
