@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -21,6 +22,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface ModelDropdownProps {
   onSelect: (option: string) => void
+}
+
+interface AddFreeSubscriptionUserModalProps {
+  users: { _id: string; userName: string }[];
+  selectedUsers: { _id: string; userName: string }[];
+  setSelectedUsers: React.Dispatch<React.SetStateAction<{ _id: string; userName: string }[]>>;
 }
 
 interface PromptAPIResponse {
@@ -96,8 +103,6 @@ const NegativeKeywordsModal: React.FC<NegativeKeywordsModalProps> = ({
     {negativeKeywords.map((keywordObj, index) => (
       <div key={keywordObj._id || index} className="flex items-center justify-between">
         <div className="flex-1">
-          {/* Display _id for reference */}
-          {/* {keywordObj._id && <Label>ID: {keywordObj._id}</Label>} */}
           <Input
             value={keywordObj.negativeKeyword}
             onChange={(e) => updateKeyword(index, e.target.value)}
@@ -212,6 +217,126 @@ const TestingValuesModal: React.FC<TestingValuesModalProps> = ({
   </div>
 );
 
+const AddFreeSubscriptionUserModal: React.FC<AddFreeSubscriptionUserModalProps> = ({
+  users,
+  selectedUsers,
+  setSelectedUsers,
+}) => {
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [freeUsers, setFreeUsers] = useState<any[]>([]); // State to hold fetched free users
+  const [removingUserId, setRemovingUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch free users when the modal loads
+    const fetchFreeUsers = async () => {
+      try {
+        const response = await axios.get('https://dashboard.flashailens.com/api/dashboard/getFreeUser');
+        setFreeUsers(response.data.data);
+        console.log(response.data.data); // Set the fetched users
+      } catch (error) {
+        console.error('Error fetching free users:', error);
+      }
+    };
+  
+    fetchFreeUsers();
+  }, []); // Empty dependency array to run only on mount
+  
+  const removeUser = async (id: string) => {
+    console.log('Removing user with ID:', id);
+    const updatedSelectedUsers = selectedUsers.filter(user => user._id !== id);
+    setSelectedUsers(updatedSelectedUsers);
+    setRemovingUserId(id); // Set the user ID being removed
+  
+    try {
+      // Send a DELETE request to the API with the user ID in the URL
+      const response = await axios.delete(`https://dashboard.flashailens.com/api/dashboard/deleteFreeUser/${id}`);
+  
+      // Check if the response indicates success
+      if (response.status !== 200) {
+        // If the response is not successful, revert the state change
+        setSelectedUsers(selectedUsers); // Revert to the previous state
+        setRemovingUserId(null); // Clear the removing user ID
+        console.error('Failed to remove user:', response.data); // Log failure message
+      } else {
+        console.log('User removed successfully'); // Log success message
+        setRemovingUserId(null); // Clear the removing user ID
+      }
+    } catch (error) {
+      // If an error occurs, revert the state change
+      setSelectedUsers(selectedUsers); // Revert to the previous state
+      setRemovingUserId(null); // Clear the removing user ID
+      console.error('Error removing user:', error); // Log the error
+      console.error('User with ID:', id, 'was not removed'); // Log specific error message
+    }
+  };
+  
+  // Example usage of removeUser with user ID from free users
+  const handleRemoveFreeUser = (userId: string) => {
+    removeUser(userId); // Call removeUser with the user ID from the free users
+  };
+
+  const handleUserSelect = async (value: string) => {
+    setSelectedUserId(value);
+    const userToAdd = users.find(user => user._id === value); // Updated to find user in all users
+    if (userToAdd && !selectedUsers.some(u => u._id === userToAdd._id)) {
+      setSelectedUsers([...selectedUsers, userToAdd]);
+      
+      // Send selected user data to the API
+      await axios.post('https://dashboard.flashailens.com/api/dashboard/addFreeUser', {
+        models : [{ _id: "", userName: userToAdd.userName }]
+      });
+    }
+    setSelectedUserId(''); // Reset the selection
+  };
+
+  return (
+    <div className="grid gap-4">
+      <Select
+        value={selectedUserId}
+        onValueChange={handleUserSelect} // Updated to use the new handler
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select a user" />
+        </SelectTrigger>
+        <SelectContent>
+          {users.map(user => ( // Display all users in the select list
+            <SelectItem key={user._id} value={user._id}>
+              {user.userName}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <div className=''>
+        <h4 className='mb-1'>Free Users:</h4> {/* Added header for free users */}
+        {freeUsers.map(user => ( // Display free users below the select list
+          <div key={user._id} className="flex items-center justify-between margin-10">
+            <span className='rounded-md mobile-100 w-[90%] d-block'>{user.userName}</span>
+            <Button
+              onClick={() => removeUser(user._id)}
+              variant="destructive"
+              size="sm"
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+        {selectedUsers.map(user => (
+          <div key={user._id} className="flex items-center justify-between margin-10">
+            <span className='rounded-md mobile-100 w-[90%] d-block'>{user.userName}</span>
+            <Button
+              onClick={() => removeUser(user._id)}
+              variant="destructive"
+              size="sm"
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export function ModelDropdown({ onSelect }: ModelDropdownProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentModal, setCurrentModal] = useState<string | null>(null)
@@ -232,6 +357,8 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
     stageUrl: '',
     isLive: 'true'
   })
+  const [users, setUsers] = useState<{ _id: string; userName: string }[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<{ _id: string; userName: string }[]>([]);
 
   useEffect(() => {
     const fetchPromptData = async () => {
@@ -281,22 +408,41 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
       }
     };
 
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('https://dashboard.flashailens.com/api/dashboard/getUsers');
+          const data: FirebaseUserAPIResponse = await response.json();
+          setUsers(Array.isArray(data.data) ? data.data.map((user: { _id: string; userName: string }) => ({ _id: user._id, userName: user.userName })) : []);
+        } catch (error) {
+          console.error('Error fetching users:', error);
+      };
+    }
     fetchPromptData();
     fetchNegativeKeywords();
     fetchFirebaseUserData();
+    fetchUsers();
   }, []);
+
+  const handleOptionSelect = (option: string) => {
+    setCurrentModal(option);
+    setIsModalOpen(true);
+    if (option === "Add Free Subscription User") {
+      setSelectedUsers([]); // Reset selected users when opening the modal
+    }
+  }
 
   const options = [
     "Add Negative Keywords",
+    "Add Free Subscription User",
     "System Prompt",
     "Remix Prompt",
     "Update Testing And User Value"
   ]
 
-  const handleOptionSelect = (option: string) => {
-    setCurrentModal(option)
-    setIsModalOpen(true)
-  }
+  // const handleOptionSelect = (option: string) => {
+  //   setCurrentModal(option)
+  //   setIsModalOpen(true)
+  // }
 
   const addKeyword = () => {
     if (currentKeyword && !negativeKeywords.some(k => k.negativeKeyword === currentKeyword)) {
@@ -443,6 +589,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
     });
   };
 
+  
   return (
     <>
       <DropdownMenu>
@@ -495,6 +642,14 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
               <TestingValuesModal
                 testingValues={testingValues}
                 handleTestingValueChange={handleTestingValueChange}
+              />
+            )}
+
+            {currentModal === "Add Free Subscription User" && (
+              <AddFreeSubscriptionUserModal
+                users={users}
+                selectedUsers={selectedUsers}
+                setSelectedUsers={setSelectedUsers}
               />
             )}
           </div>

@@ -71,6 +71,9 @@ span.d-block {
 .margin-top-3{
     margin-top: 3rem;
 }
+.margin-10{
+    margin-bottom: 10px;
+}
 /* media */
 @media(max-width:767px){
     .margin-top-10 {
