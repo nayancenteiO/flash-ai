@@ -96,7 +96,9 @@ export default function Dashboard() {
                     <LineChart data={mockData}>
                       <XAxis dataKey="date" />
                       <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartTooltip>
+  <ChartTooltipContent />
+</ChartTooltip>
                       <Line type="monotone" dataKey="users" stroke="var(--color-users)" strokeWidth={2} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -132,7 +134,9 @@ export default function Dashboard() {
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartTooltip>
+  <ChartTooltipContent />
+</ChartTooltip>
                     </PieChart>
                   </ResponsiveContainer>
                 </ChartContainer>
