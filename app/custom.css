@@ -77,14 +77,25 @@ span.d-block {
 .bols {
     font-weight: 600;
 }
-
+.align-items-end {
+    align-items: flex-end;
+}
+.max-content {
+    width: max-content;
+}
 /* media */
 @media(max-width:767px){
     .mobile-pad-less {
         padding: 0;
     }
+    .mobile-tread {
+        width: 100% !important;
+    }
     .margin-top-10 {
         margin-top: 5rem;
+    }
+    .mobile-flex-end {
+        flex-direction: column;
     }
     .custom-flex {
         flex-direction: column;

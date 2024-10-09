@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback  } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo  } from 'react'
 import { Camera, Loader2, Copy, Trash2, MoveUp, MoveDown, LogIn, Menu, Upload, Plus, Search, Pencil } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Switch } from "@/components/ui/switch"
@@ -26,6 +26,7 @@ import { log } from 'console'
 import { LensNameDialog } from './LensNameDialog'
 import { NumberFieldDialog } from './NumberFieldDialog'
 import { AproxTimeDialog } from './AproxTimeDialog'
+import EditNegativePromptModal from './EditNegativePromptModal'
 
 // Utility function for decryption
 async function decryptField(encryptedData: string): Promise<string> {
@@ -84,116 +85,7 @@ type Lens = {
   usageCount: number;
 }; 
 
-interface NegativeKeyword {
-  negative: string;
-  replace: string;
-}
 
-interface EditNegativePromptModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  lensId: number;
-  currentNegativePrompt: string;
-  onSave: (lensId: number, newNegativePrompt: string) => Promise<void>;
-}
-
-export const EditNegativePromptModal: React.FC<EditNegativePromptModalProps> = ({
-  isOpen,
-  onClose,
-  lensId,
-  currentNegativePrompt,
-  onSave,
-}) => {
-  const [keywords, setKeywords] = useState<NegativeKeyword[]>([]);
-
-  useEffect(() => {
-    // Parse the current negative prompt and set initial keywords
-    const parsedKeywords = currentNegativePrompt.split(',').map(keyword => {
-      const [negative, replace] = keyword.split(':').map(k => k.trim());
-      return { negative, replace: replace || '' };
-    });
-    setKeywords(parsedKeywords);
-  }, [currentNegativePrompt]);
-
-  const handleAddKeyword = () => {
-    setKeywords([...keywords, { negative: '', replace: '' }]);
-  };
-
-  const handleRemoveKeyword = (index: number) => {
-    setKeywords(keywords.filter((_, i) => i !== index));
-  };
-
-  const handleKeywordChange = (index: number, field: 'negative' | 'replace', value: string) => {
-    const newKeywords = [...keywords];
-    newKeywords[index][field] = value;
-    setKeywords(newKeywords);
-  };
-
-  const handleSave = async () => {
-    const newNegativePrompt = keywords
-      .filter(k => k.negative.trim() !== '')
-      .map(k => k.replace ? `${k.negative}:${k.replace}` : k.negative)
-      .join(', ');
-
-    try {
-      await onSave(lensId, newNegativePrompt);
-      onClose();
-      toast({
-        title: "Success",
-        description: "Negative prompt updated successfully",
-      });
-    } catch (error) {
-      console.error('Error updating negative prompt:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update negative prompt. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] w-full">
-        <DialogHeader>
-          <DialogTitle>Add Negative & Replace Keywords</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          {keywords.map((keyword, index) => (
-            <div key={index} className="flex items-center gap-4">
-              <div className='w-[40%]'>
-                <Label htmlFor={`negative-${index}`}>Negative Keywords</Label>
-                <Input
-                  id={`negative-${index}`}
-                  value={keyword.negative}
-                  onChange={(e) => handleKeywordChange(index, 'negative', e.target.value)}
-                />
-              </div>
-              <div className='w-[40%]'>
-                <Label htmlFor={`replace-${index}`}>Replace Negative Keywords</Label>
-                <Input
-                  id={`replace-${index}`}
-                  value={keyword.replace}
-                  onChange={(e) => handleKeywordChange(index, 'replace', e.target.value)}
-                />
-              </div>
-              <Button variant="destructive" onClick={() => handleRemoveKeyword(index)}>
-                Remove
-              </Button>
-            </div>
-          ))}
-          <Button onClick={handleAddKeyword}>Add Keywords</Button>
-        </div>
-        <DialogFooter>
-          <Button variant="secondary" onClick={onClose}>
-            Close
-          </Button>
-          <Button onClick={handleSave}>Save</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 export function AiLensDashboard() {
     const [lenses, setLenses] = useState<Lens[]>([]);
@@ -221,7 +113,7 @@ export function AiLensDashboard() {
     const [editingAproxTimeId, setEditingAproxTimeId] = useState<number | null>(null);
 
     const [isEditNegativePromptModalOpen, setIsEditNegativePromptModalOpen] = useState(false);
-    const [editingLensId, setEditingLensId] = useState<number | null>(null);  
+  const [editingLensId, setEditingLensId] = useState<string | null>(null); 
   
     useEffect(() => {
       fetchLensData();
@@ -235,6 +127,7 @@ export function AiLensDashboard() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
+
         if (!result.data || !Array.isArray(result.data)) {
           console.error('API response is not in the expected format:', result);
           throw new Error('API response is not in the expected format');
@@ -1192,22 +1085,22 @@ export function AiLensDashboard() {
       }
     }
 
-    const handleEditNegative = (id: number) => {
-      setEditingLensId(id);
+    const handleEditNegative = useCallback((lensId: string) => {
+      setEditingLensId(lensId);
       setIsEditNegativePromptModalOpen(true);
-    };
+    }, []);
      // Add this new function to handle saving the updated negative prompt
-    const handleSaveNegativePrompt = async (id: number, newNegativePrompt: string) => {
-      try {
-        await updatePrompt(id, 'negativePrompt', newNegativePrompt);
-        setLenses(lenses.map(lens => 
-          lens.id === id ? { ...lens, negativePrompt: newNegativePrompt } : lens
-        ));
-      } catch (error) {
-        console.error('Error updating negative prompt:', error);
-        throw error;
-      }
-    };
+    //  const handleSaveNegativePrompt = async (id: number, newNegativePrompt: string) => {
+    //   try {
+    //     await updatePrompt(id, 'negativePrompt', newNegativePrompt);
+    //     setLenses(lenses.map(lens => 
+    //       lens.id === id ? { ...lens, negativePrompt: newNegativePrompt } : lens
+    //     ));
+    //   } catch (error) {
+    //     console.error('Error updating negative prompt:', error);
+    //     throw error;
+    //   }
+    // };
 
     const handleDeleteLens = (id: number) => {
       setLenses(lenses.filter(lens => lens.id !== id))
@@ -1712,9 +1605,9 @@ export function AiLensDashboard() {
           </AccordionItem>
         </Accordion>
         <div className="flex justify-between mt-4">
-          <Button variant="outline" size="sm" onClick={() => handleEditNegative(lens.id)}>
-            N
-          </Button>
+        <Button variant="outline" size="icon" onClick={() => handleEditNegative(lens.lensId)}>
+        N
+      </Button>
           <Button variant="outline" size="sm" onClick={() => handleCopyLens(lens.id)}>
             <Copy className="h-4 w-4 mr-2" />
             Copy
@@ -1748,8 +1641,7 @@ export function AiLensDashboard() {
           isOpen={isEditNegativePromptModalOpen}
           onClose={() => setIsEditNegativePromptModalOpen(false)}
           lensId={editingLensId}
-          currentNegativePrompt={lenses.find(l => l.id === editingLensId)?.negativePrompt || ''}
-          onSave={handleSaveNegativePrompt}
+          // onSave={handleSaveNegativePrompt}
         />
       )}
       {isLoggedIn && (
@@ -2024,9 +1916,9 @@ export function AiLensDashboard() {
                           <TableCell>{lens.lastUpdate.toLocaleDateString()}</TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
-                              <Button variant="outline" size="icon" onClick={() => handleEditNegative(lens.id)}>
-                                N
-                              </Button>
+                            <Button variant="outline" size="icon" onClick={() => handleEditNegative(lens.lensId)}>
+        N
+      </Button>
                               <Button variant="outline" size="icon" onClick={() => handleCopyLens(lens.id)}>
                                 <Copy className="h-4 w-4" />
                               </Button>

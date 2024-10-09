@@ -755,7 +755,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
               placeholder="New option"
               className="flex-grow"
             />
-            <Button disabled={!newOption.trim()} onClick={handleAddOption} className="ml-2">
+            <Button disabled={!newOption.trim()}onClick={handleAddOption} className="ml-2">
               Add Option
             </Button>
           </div>
