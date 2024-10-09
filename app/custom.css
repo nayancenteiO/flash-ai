@@ -74,8 +74,15 @@ span.d-block {
 .margin-10{
     margin-bottom: 10px;
 }
+.bols {
+    font-weight: 600;
+}
+
 /* media */
 @media(max-width:767px){
+    .mobile-pad-less {
+        padding: 0;
+    }
     .margin-top-10 {
         margin-top: 5rem;
     }

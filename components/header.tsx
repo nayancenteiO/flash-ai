@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { Camera, LayoutDashboard, Menu, User, Image, LogOut } from 'lucide-react'
+import { Camera, LayoutDashboard, Menu, User, Zap,  Image, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -67,6 +67,10 @@ export default function Header({ isLoggedIn, email, handleLogout, handleLogin, s
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
               <div className="py-4 flex flex-col space-y-4">
+                <Button variant="outline" onClick={() => { openPage('https://flashailens.com/api/dashboard'); toggleMenu(); }}>
+                    <Zap className="h-4 w-4 mr-2" />
+                    Live Dashboard
+                  </Button>
                 {currentPage !== 'negative' && (
                   <Button variant="outline" onClick={() => { openPage('/negative-analysis'); toggleMenu(); }}>
                     <LayoutDashboard className="h-4 w-4 mr-2" />

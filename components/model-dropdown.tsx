@@ -20,6 +20,14 @@ import {
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
+interface DislikeText {
+  _id: string
+  title: string
+  description: string
+  options: string[]
+}
+
+
 interface ModelDropdownProps {
   onSelect: (option: string) => void
 }
@@ -79,6 +87,43 @@ interface FirebaseUserAPIResponse {
     stageUrl: string;
   };
 }
+
+interface AddCommentModalProps {
+  creatorTitle: string;
+  setCreatorTitle: React.Dispatch<React.SetStateAction<string>>;
+  viewerTitle: string;
+  setViewerTitle: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const AddModelCommentModal: React.FC<AddCommentModalProps> = ({
+  creatorTitle,
+  setCreatorTitle,
+  viewerTitle,
+  setViewerTitle,
+}) => (
+  <div className="grid gap-4">
+    <div>
+      <h3 className='mb-1 bols'>Creator</h3>
+      <Label htmlFor="creator-title">Title</Label>
+      <Input
+        id="creator-title"
+        value={creatorTitle}
+        onChange={(e) => setCreatorTitle(e.target.value)}
+        placeholder="Enter Title"
+      />
+    </div>
+    <div>
+      <h3 className='mb-1 bols'>Viewer</h3>
+      <Label htmlFor="viewer-title">Title</Label>
+       <Input
+        id="viewer-title"
+        value={viewerTitle}
+        onChange={(e) => setViewerTitle(e.target.value)}
+        placeholder="Enter Title"
+      />
+    </div>
+  </div>
+);
 
 // Define modal components outside of ModelDropdown
 
@@ -223,56 +268,48 @@ const AddFreeSubscriptionUserModal: React.FC<AddFreeSubscriptionUserModalProps> 
   setSelectedUsers,
 }) => {
   const [selectedUserId, setSelectedUserId] = useState<string>('');
-  const [freeUsers, setFreeUsers] = useState<any[]>([]); // State to hold fetched free users
+  const [freeUsers, setFreeUsers] = useState<any[]>([]); 
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch free users when the modal loads
     const fetchFreeUsers = async () => {
       try {
         const response = await axios.get('https://dashboard.flashailens.com/api/dashboard/getFreeUser');
         setFreeUsers(response.data.data);
-        console.log(response.data.data); // Set the fetched users
+        console.log(response.data.data);
       } catch (error) {
         console.error('Error fetching free users:', error);
       }
     };
   
     fetchFreeUsers();
-  }, []); // Empty dependency array to run only on mount
+  }, []);
   
   const removeUser = async (id: string) => {
     console.log('Removing user with ID:', id);
     const updatedSelectedUsers = selectedUsers.filter(user => user._id !== id);
     setSelectedUsers(updatedSelectedUsers);
-    setRemovingUserId(id); // Set the user ID being removed
-  
+    setRemovingUserId(id); 
     try {
-      // Send a DELETE request to the API with the user ID in the URL
       const response = await axios.delete(`https://dashboard.flashailens.com/api/dashboard/deleteFreeUser/${id}`);
-  
-      // Check if the response indicates success
       if (response.status !== 200) {
-        // If the response is not successful, revert the state change
-        setSelectedUsers(selectedUsers); // Revert to the previous state
-        setRemovingUserId(null); // Clear the removing user ID
-        console.error('Failed to remove user:', response.data); // Log failure message
+        setSelectedUsers(selectedUsers); 
+        setRemovingUserId(null);
+        console.error('Failed to remove user:', response.data); 
       } else {
-        console.log('User removed successfully'); // Log success message
-        setRemovingUserId(null); // Clear the removing user ID
+        console.log('User removed successfully');
+        setRemovingUserId(null);
       }
     } catch (error) {
-      // If an error occurs, revert the state change
-      setSelectedUsers(selectedUsers); // Revert to the previous state
-      setRemovingUserId(null); // Clear the removing user ID
-      console.error('Error removing user:', error); // Log the error
-      console.error('User with ID:', id, 'was not removed'); // Log specific error message
+      setSelectedUsers(selectedUsers); 
+      setRemovingUserId(null); 
+      console.error('Error removing user:', error);
+      console.error('User with ID:', id, 'was not removed'); 
     }
   };
   
-  // Example usage of removeUser with user ID from free users
   const handleRemoveFreeUser = (userId: string) => {
-    removeUser(userId); // Call removeUser with the user ID from the free users
+    removeUser(userId); 
   };
 
   const handleUserSelect = async (value: string) => {
@@ -359,6 +396,16 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
   })
   const [users, setUsers] = useState<{ _id: string; userName: string }[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<{ _id: string; userName: string }[]>([]);
+  const [creatorTitle, setCreatorTitle] = useState('');
+  const [viewerTitle, setViewerTitle] = useState('');
+
+  const [dislikeText, setDislikeText] = useState<DislikeText>({
+    _id: '',
+    title: '',
+    description: '',
+    options: []
+  })
+
 
   useEffect(() => {
     const fetchPromptData = async () => {
@@ -417,6 +464,29 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
           console.error('Error fetching users:', error);
       };
     }
+
+    const fetchCommentTitles = async () => {
+      try {
+        const response = await fetch('https://dashboard.flashailens.com/api/dashboard/getCommentTitles');
+        const data = await response.json();
+        setCreatorTitle(data.data.creatorTitle);
+        setViewerTitle(data.data.viewerTitle);
+      } catch (error) {
+        console.error('Error fetching comment titles:', error);
+      }
+    };
+
+    const fetchDislikeText = async () => {
+      try {
+        const response = await axios.get('https://dashboard.flashailens.com/api/dashboard/getDislikeTexts')
+        setDislikeText(response.data.data)
+      } catch (error) {
+        console.error('Error fetching dislike text:', error)
+      }
+    }
+
+    fetchDislikeText();
+    fetchCommentTitles();
     fetchPromptData();
     fetchNegativeKeywords();
     fetchFirebaseUserData();
@@ -433,16 +503,13 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
 
   const options = [
     "Add Negative Keywords",
+    "Add Comment Titles",
+    "Add Dislike Text",
     "Add Free Subscription User",
     "System Prompt",
     "Remix Prompt",
     "Update Testing And User Value"
   ]
-
-  // const handleOptionSelect = (option: string) => {
-  //   setCurrentModal(option)
-  //   setIsModalOpen(true)
-  // }
 
   const addKeyword = () => {
     if (currentKeyword && !negativeKeywords.some(k => k.negativeKeyword === currentKeyword)) {
@@ -552,6 +619,43 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
           console.error("Error updating remix prompts:", error); 
         }
         break;
+      case "Add Comment Titles":
+        try {
+          const response = await fetch('https://dashboard.flashailens.com/api/dashboard/updateCommentTitles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ creatorTitle, viewerTitle }),
+          });
+
+          if (response.ok) {
+            console.log("Comment titles updated successfully");
+          } else {
+            const errorData = await response.json();
+            console.error("Error updating comment titles:", errorData.message || errorData);
+          }
+        } catch (error) {
+          console.error("Error updating comment titles:", error);
+        }
+        break;
+      case "Add Dislike Text":
+        try {
+          await axios.post('https://dashboard.flashailens.com/api/dashboard/addDislikeText', {
+            models: [{
+              title: dislikeText.title,
+              description: dislikeText.description,
+              options: dislikeText.options
+            }]
+          })
+          console.log("Dislike text updated successfully")
+          // Refresh the dislike text data
+          const response = await axios.get('https://dashboard.flashailens.com/api/dashboard/getDislikeTexts')
+          setDislikeText(response.data.data)
+        } catch (error) {
+          console.error('Error updating dislike text:', error)
+        }
+        break;
       case "Update Testing And User Value":
         try {
           const response = await fetch('https://dashboard.flashailens.com/api/dashboard/updateFirebaseUserValue', {
@@ -576,6 +680,89 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
     onSelect(currentModal || "");
     setIsModalOpen(false);
   };
+
+  const AddDislikeText = () => {
+    const [newOption, setNewOption] = useState('')
+
+    const handleAddOption = () => {
+      if (newOption.trim()) {
+        setDislikeText(prev => ({
+          ...prev,
+          options: [...prev.options, newOption.trim()]
+        }))
+        setNewOption('')
+      }
+    }
+
+    const handleRemoveOption = async (index: number) => {
+      const optionToRemove = dislikeText.options[index];
+      
+      try {
+        await axios.post(
+          'https://dashboard.flashailens.com/api/dashboard/deleteDislikeText',optionToRemove 
+        );
+        // Update the state after successful deletion
+        setDislikeText((prev) => ({
+          ...prev,
+          options: prev.options.filter((_, i) => i !== index),
+        }));
+      } catch (error) {
+        console.error('Error deleting dislike text option:', error);
+      }
+    };
+
+    return (
+      <div className='grid gap-4'>
+        <div>
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
+            value={dislikeText.title}
+            onChange={(e) => setDislikeText(prev => ({ ...prev, title: e.target.value }))}
+            placeholder="Enter title"
+          />
+        </div>
+        <div>
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            value={dislikeText.description}
+            onChange={(e) => setDislikeText(prev => ({ ...prev, description: e.target.value }))}
+            placeholder="Enter description"
+          />
+        </div>
+        <div>
+          <Label>Options</Label>
+          {dislikeText.options.map((option, index) => (
+            <div key={index} className="flex items-center mb-2">
+              <Input 
+                value={option} 
+                onChange={(e) => {
+                  const newOptions = [...dislikeText.options]
+                  newOptions[index] = e.target.value
+                  setDislikeText(prev => ({ ...prev, options: newOptions }))
+                }}
+                className="flex-grow" />
+              <Button onClick={() => handleRemoveOption(index)} variant="destructive" size="sm" className="ml-2">
+                Remove
+              </Button>
+            </div>
+          ))}
+          <div className="flex items-center mt-2">
+            <Input
+              value={newOption}
+              onChange={(e) => setNewOption(e.target.value)}
+              placeholder="New option"
+              className="flex-grow"
+            />
+            <Button disabled={!newOption.trim()} onClick={handleAddOption} className="ml-2">
+              Add Option
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const handleTestingValueChange = (key: string, value: string) => {
     setTestingValues((prev) => ({ ...prev, [key]: value }));
@@ -613,7 +800,7 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
           <DialogHeader>
             <DialogTitle>{currentModal}</DialogTitle>
           </DialogHeader>
-          <div className="max-h-[63vh] overflow-y-auto p-4">
+          <div className="max-h-[63vh] overflow-y-auto p-4 mobile-pad-less">
             {currentModal === "Add Negative Keywords" && (
               <NegativeKeywordsModal
                 negativeKeywords={negativeKeywords}
@@ -652,6 +839,15 @@ export function ModelDropdown({ onSelect }: ModelDropdownProps) {
                 setSelectedUsers={setSelectedUsers}
               />
             )}
+            {currentModal === "Add Comment Titles" && (
+              <AddModelCommentModal
+                creatorTitle={creatorTitle}
+                setCreatorTitle={setCreatorTitle}
+                viewerTitle={viewerTitle}
+                setViewerTitle={setViewerTitle}
+              />
+            )}
+            {currentModal === "Add Dislike Text" && <AddDislikeText />}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
